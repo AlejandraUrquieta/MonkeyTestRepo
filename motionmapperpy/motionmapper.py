@@ -253,8 +253,14 @@ def file_embeddingSubSampling(projectionFile, parameters):
             b = len(sd)
             c = sd.shape[1]
             
-            sd = sd[a:b-a, 0:c]
-            sa = sa[a:b-a]
+            rowindx = int(sd.shape[0]/2)
+            
+            #sd = sd[a:b-a, 0:c]
+            #sa = sa[a:b-a]
+
+            sd = sd[rowindx:rowindx+1, :]
+            sa = sa[rowindx:rowindx+1]
+
             
             '''
             print(sa.shape)
@@ -286,13 +292,13 @@ def file_embeddingSubSampling(projectionFile, parameters):
         # list_sa should all be like
         # [(N1, ), (N2, ), (N3, )]
         
-        [print(x.shape) for x in list_sa]
-        [print(x.shape) for x in list_sd]
+        #[print(x.shape) for x in list_sa]
+        #[print(x.shape) for x in list_sd]
         #assert False, "coinfirm shapes, then remove this assertiuon line to contineu"
         signalAmps = np.concatenate(list_sa, axis=0)
         signalData = np.concatenate(list_sd, axis=0)
-        print(signalAmps.shape)
-        print(signalData.shape)
+        #print(signalAmps.shape)
+        #print(signalData.shape)
         #assert False, "confirm shapes are as expected"
         #assert signalAmps.shape[0]==signalData.shape[0]
         
@@ -350,7 +356,6 @@ def get_wavelet(projections, parameters):
 def runEmbeddingSubSampling(projectionDirectory, parameters):
     """
     runEmbeddingSubSampling generates a training set given a set of .mat files.
-
     :param projectionDirectory: directory path containing .mat projection files.
     Each of these files should contain an N x pcaModes variable, 'projections'.
     :param parameters: motionmapperpy Parameters dictionary.
@@ -736,4 +741,3 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
     print('Embeddings found in %0.02f seconds.'%(time.time()-t1))
 
     return zValues,outputStatistics
-
