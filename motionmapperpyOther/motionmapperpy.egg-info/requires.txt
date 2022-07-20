@@ -1,0 +1,9 @@
+numpy
+scipy
+matplotlib
+h5py
+hdf5storage
+scikit-learn
+scikit-image
+easydict
+umap-learn

@@ -1,0 +1,14 @@
+LICENSE
+README.md
+setup.py
+motionmapperpy/__init__.py
+motionmapperpy/mmutils.py
+motionmapperpy/motionmapper.py
+motionmapperpy/setrunparameters.py
+motionmapperpy/wavelet.py
+motionmapperpy/wshed.py
+motionmapperpy.egg-info/PKG-INFO
+motionmapperpy.egg-info/SOURCES.txt
+motionmapperpy.egg-info/dependency_links.txt
+motionmapperpy.egg-info/requires.txt
+motionmapperpy.egg-info/top_level.txt
