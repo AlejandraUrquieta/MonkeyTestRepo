@@ -65,14 +65,14 @@ def wshedTransform(zValues, min_regions, sigma, tsnefolder, saveplot=True):
             ax.text(np.mean(yinds) - fontsize, np.mean(xinds) - fontsize, str(i), fontsize=fontsize, fontweight='bold')
             print(np.mean(xinds))
             print(np.mean(yinds))
-        #ax.axis('off')
+        ax.axis('off')
 
         ax = axes[1]
         ax.imshow(density, origin='lower', cmap=bmapcmap)
         ax.scatter(wbounds[0], wbounds[1], color='k', s=0.1)
         print("wboudns",wbounds[0])
         print("wbounds",wbounds[1].shape)
-        #ax.axis('off')
+        ax.axis('off')
 
         fig.savefig(tsnefolder + 'zWshed%i.png' % numRegs)
 
@@ -176,22 +176,23 @@ def findWatershedRegions(parameters, minimum_regions=150, startsigma=0.1, pThres
         pThreshold = [0.33, 0.67]
 
     zValues = []
-    projfiles = glob.glob(projectionfolder + '/'+endident)
+    #projfiles = glob.glob(projectionfolder + '/'+endident)
+    projfiles = glob.glob(projectionfolder + endident)
     t1 = time.time()
 
     zValNames = []
     zValLens = []
     ampVels = []
     for pi, projfile in enumerate(projfiles):
-        fname = projfile.split('/')[-1].split('.')[0]
+        fname = projfile.split('/')[-1].split.split("\\")[1]('.')[0]
         zValNames.append(fname)
         print('%i/%i Loading embedding for %s %0.02f seconds.' % (pi + 1, len(projfiles), fname, time.time() - t1))
         if parameters.method == 'TSNE':
             zValident = 'zVals' if parameters.waveletDecomp else 'zValsProjs'
         else:
             zValident = 'uVals'
-        #with h5py.File(projectionfolder + fname + '_%s.mat'%zValident, 'r') as h5file:
-        with h5py.File('content/trial1_mmpy/Projections/test_monkey_notpca'+ '_%s.mat'%zValident, 'r') as h5file:
+        with h5py.File(projectionfolder + fname + '_%s.mat'%zValident, 'r') as h5file:
+        #with h5py.File('content/trial1_mmpy/Projections/test_monkey_notpca'+ '_%s.mat'%zValident, 'r') as h5file:
             zValues.append(h5file['zValues'][:].T)
         ampVels.append(np.concatenate(([0], np.linalg.norm(np.diff(zValues[-1], axis=0), axis=1)), axis=0))
         # with h5py.File(projectionfolder + fname + '_zAmps_vel.mat', 'r') as h5file:
