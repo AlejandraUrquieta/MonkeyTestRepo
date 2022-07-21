@@ -249,17 +249,24 @@ def file_embeddingSubSampling(projectionFile, parameters):
             #print(sa.shape) # (71,)
             #print(sd.shape) # (71,50)
             
-            a = int((sd.shape[0])/4)
-            b = len(sd)
-            c = sd.shape[1]
+            #a = int((sd.shape[0])/4)
+            #b = len(sd)
+            #c = sd.shape[1]
             
-            rowindx = int(sd.shape[0]/2)
+            #rowindx = int(sd.shape[0]/2)
             
             #sd = sd[a:b-a, 0:c]
             #sa = sa[a:b-a]
 
-            sd = sd[rowindx:rowindx+1, :]
-            sa = sa[rowindx:rowindx+1]
+            a = int((sd.shape[0])/4)
+            b = len(sd)
+
+            sd = sd[3*a:b-3*a, : ]
+            sa = sa[3*a:b-3*a, : ]
+
+
+            #sd = sd[rowindx:rowindx+1, :]
+            #sa = sa[rowindx:rowindx+1]
 
             
             '''

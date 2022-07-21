@@ -93,41 +93,34 @@ def get_strokes(dataTotal,num):
 # function to run subsampled tsne
 def sub_tsne(parameters):
 	mmpy.subsampled_tsne_from_projections(parameters, parameters.projectPath)
-	print("HERE1") 
 
 # function to run tsne for all data
 def total_tsne(parameters):
 	#tsne takes 19 mins
 	tall = time.time()
 
-	print("HERE2") 
 
 
 	import h5py
 	tfolder = parameters.projectPath+'/%s/'%parameters.method
-	print("HERE3") 
 
 	# Loading training data
 	with h5py.File(tfolder + 'training_data.mat', 'r') as hfile:
 	    trainingSetData = hfile['trainingSetData'][:].T
-	print("HERE4") 
 
 	# Loading training embedding
 	with h5py.File(tfolder+ 'training_embedding.mat', 'r') as hfile:
 	    trainingEmbedding= hfile['trainingEmbedding'][:].T
-	print("HERE5") 
 
 	if parameters.method == 'TSNE':
 	    zValstr = 'zVals' 
 	else:
 	    zValstr = 'uVals'
 
-	print("HERE6") 
 
 
 	projectionFiles = glob.glob(parameters.projectPath+'/Projections/*notpca.mat')
 
-	print("HERE7") 
 
 
 	for i in range(len(projectionFiles)):
