@@ -253,24 +253,24 @@ def file_embeddingSubSampling(projectionFile, parameters):
             #b = len(sd)
             #c = sd.shape[1]
             
-            #rowindx = int(sd.shape[0]/2)
+            rowindx = int(sd.shape[0]/2)
             
             #sd = sd[a:b-a, 0:c]
             #sa = sa[a:b-a]
 
-            a = int((sd.shape[0])/8)
-            b = len(sd)
-            print(a)
-            print(b)
-            print(3*a)
-            print(b-3*a)
+            #a = int((sd.shape[0])/8)
+            #b = len(sd)
+            #print(a)
+            #print(b)
+            #print(3*a)
+            #print(b-3*a)
 
-            sd = sd[3*a:b-3*a, :]
-            sa = sa[3*a:b-3*a]
+            #sd = sd[3*a:b-3*a, :]
+            #sa = sa[3*a:b-3*a]
 
 
-            #sd = sd[rowindx:rowindx+1, :]
-            #sa = sa[rowindx:rowindx+1]
+            sd = sd[rowindx:rowindx+1, :]
+            sa = sa[rowindx:rowindx+1]
 
             
             '''
@@ -325,6 +325,8 @@ def file_embeddingSubSampling(projectionFile, parameters):
     else:
         raise ValueError('Supported parameter.method are \'TSNE\' or \'UMAP\'')
     return yData,signalData,signalIdx,signalAmps
+
+#def 
 
 
 def get_wavelet(projections, parameters):
@@ -707,14 +709,85 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
     if parameters.waveletDecomp:
         print('Finding Wavelets')
-        for projections in projections:
-            data, f = mm_findWavelets(projections, numModes, parameters)
+        #print(projections.shape)
+        zValues = []
+        for proj in projections:
+            #print(proj.shape)
+            data, f = mm_findWavelets(proj, numModes, parameters)
             if parameters.useGPU >= 0:
                 data = data.get()
+
+            #print(data.shape)
+
+            data = data / np.sum(data, 1)[:, None]
+
+            print('Finding Embeddings')
+            t1 = time.time()
+            if parameters.method == 'TSNE':
+                zVal, zCosts, zGuesses, inConvHull, meanMax, exitFlags = findTDistributedProjections_fmin(data,
+                                                                                        trainingData, trainingEmbedding, parameters)
+                #print(zVal)
+                #print(zVal.shape)
+
+                outputStatistics = edict()
+                outputStatistics.zCosts = zCosts
+                outputStatistics.f = f
+                outputStatistics.numModes = numModes
+                outputStatistics.zGuesses = zGuesses
+                outputStatistics.inConvHull = inConvHull
+                outputStatistics.meanMax = meanMax
+                outputStatistics.exitFlags = exitFlags
+            elif parameters.method == 'UMAP':
+                umapfolder = parameters['projectPath'] + '/UMAP/'
+                print('\tLoading UMAP Model.')
+                with open(umapfolder + 'umap.model', 'rb') as f:
+                    um = pickle.load(f)
+                trainparams = np.load(umapfolder + '_trainMeanScale.npy', allow_pickle=True)
+                print('\tLoaded.')
+                embed_negative_sample_rate = parameters['embed_negative_sample_rate']
+                um.negative_sample_rate = embed_negative_sample_rate
+                zVal = um.transform(data)
+                #print(zVal)
+
+                zVal = zVal - trainparams[0]
+                #print(zVal)
+
+                zVal = zVal * trainparams[1]
+                #print(zVal)
+
+                outputStatistics = edict()
+                outputStatistics.training_mean = trainparams[0]
+                outputStatistics.training_scale = trainparams[1]
+            else:
+                raise ValueError('Supported parameter.method are \'TSNE\' or \'UMAP\'')
+            del data
+            print('Embeddings found in %0.02f seconds.'%(time.time()-t1))
+
+            
+            #print(zVal)
+
+            rowindx = int(zVal.shape[0]/2)
+
+            zVal = zVal[rowindx:rowindx+1,:]
+            #print("1",zVal1)
+            zVal = zVal[0]
+            #print("2",zVal2)
+            #print(type(zVal2))
+
+
+            zValues.append(zVal)
+
+
+
+
+
+
+
     else:
         print('Using projections for tSNE. No wavelet decomposition.')
         f = 0
         data = projections
+    '''
     data = data / np.sum(data, 1)[:, None]
 
     print('Finding Embeddings')
@@ -750,5 +823,11 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
         raise ValueError('Supported parameter.method are \'TSNE\' or \'UMAP\'')
     del data
     print('Embeddings found in %0.02f seconds.'%(time.time()-t1))
+    '''
+    #print(zValues)
+    #print(type(zValues))
 
+
+    
     return zValues,outputStatistics
+

@@ -74,9 +74,13 @@ def findPointDensity(zValues, sigma, numPoints, rangeVals):
 %       density -> numPoints x numPoints array giving the PDF values (n by n) density map.
     """
     xx = np.linspace(rangeVals[0], rangeVals[1], numPoints)
+
+
     yy = copy.copy(xx)
     [XX, YY] = np.meshgrid(xx, yy)
     G = np.exp(-0.5 * (np.square(XX) + np.square(YY)) / np.square(sigma))
+    
+
     Z = np.histogramdd(zValues, bins=[xx, yy])[0]
     Z = Z / np.sum(Z)
     Z = np.pad(Z, ((0, 1), (0, 1)), mode='constant', constant_values=((0, 0), (0, 0)))

@@ -9,6 +9,10 @@ from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
 from .mmutils import *
 
+import extraFunctions as ef
+
+
+
 bmapcmap = gencmap()
 
 
@@ -19,12 +23,12 @@ def wshedTransform(zValues, min_regions, sigma, tsnefolder, saveplot=True):
                                                    rangeVals=[-np.abs(zValues).max() - 15, np.abs(zValues).max() + 15])
     wshed = watershed(-density, connectivity=10)
 
-    print("wshed", wshed)
-    print("459",wshed[459])
+    #print("wshed", wshed)
+    #print("459",wshed[459])
 
     wshed[density < 1e-5] = 0
     numRegs = len(np.unique(wshed)) - 1
-    print("numRegs",numRegs)
+    #print("numRegs",numRegs)
 
     if numRegs < min_regions - 10:
         raise ValueError('\t Starting sigma %0.1f too high, maximum # wshed regions possible is %i.' %
@@ -42,8 +46,8 @@ def wshedTransform(zValues, min_regions, sigma, tsnefolder, saveplot=True):
     for i, wreg in enumerate(np.unique(wshed)):
         wshed[wshed == wreg] = i
     wbounds = np.where(roberts(wshed).astype('bool'))
-    print("wsehd now",wshed)
-    print("459",wshed[459])
+    #print("wsehd now",wshed)
+    #print("459",wshed[459])
 
     wbounds = (wbounds[1], wbounds[0])
     if saveplot:
@@ -55,23 +59,23 @@ def wshedTransform(zValues, min_regions, sigma, tsnefolder, saveplot=True):
         ax = axes[0]
         ax.imshow(randomizewshed(wshed), origin='lower', cmap=bmapcmap)
         a = randomizewshed(wshed)
-        print("SEE THIS", a.max())
+        #print("SEE THIS", a.max())
         for i in np.unique(wshed)[1:]:
-            print(np.unique(wshed)[1:])
+            #print(np.unique(wshed)[1:])
             fontsize = 8
             xinds, yinds = np.where(wshed == i)
-            print(xinds.shape)
-            print(yinds)
+            #print(xinds.shape)
+            #print(yinds)
             ax.text(np.mean(yinds) - fontsize, np.mean(xinds) - fontsize, str(i), fontsize=fontsize, fontweight='bold')
-            print(np.mean(xinds))
-            print(np.mean(yinds))
+            #print(np.mean(xinds))
+            #print(np.mean(yinds))
         ax.axis('off')
 
         ax = axes[1]
         ax.imshow(density, origin='lower', cmap=bmapcmap)
         ax.scatter(wbounds[0], wbounds[1], color='k', s=0.1)
-        print("wboudns",wbounds[0])
-        print("wbounds",wbounds[1].shape)
+        #print("wboudns",wbounds[0])
+        #print("wbounds",wbounds[1].shape)
         ax.axis('off')
 
         fig.savefig(tsnefolder + 'zWshed%i.png' % numRegs)
@@ -191,10 +195,19 @@ def findWatershedRegions(parameters, minimum_regions=150, startsigma=0.1, pThres
             zValident = 'zVals' if parameters.waveletDecomp else 'zValsProjs'
         else:
             zValident = 'uVals'
-        with h5py.File(projectionfolder + fname + '_%s.mat'%zValident, 'r') as h5file:
+
+        zVals = ef.get_zValues_array(parameters, zValident)
+        print(zVals.shape)
+        #with h5py.File(projectionfolder + fname + '_%s.mat'%zValident, 'r') as h5file:
+            #print(h5file['zValues'][:].T)
+            #assert False
         #with h5py.File('content/trial1_mmpy/Projections/test_monkey_notpca'+ '_%s.mat'%zValident, 'r') as h5file:
-            zValues.append(h5file['zValues'][:].T)
+        zValues.append(zVals)
+        print(len(zValues))
+        
+
         ampVels.append(np.concatenate(([0], np.linalg.norm(np.diff(zValues[-1], axis=0), axis=1)), axis=0))
+        print(len(ampVels))
         # with h5py.File(projectionfolder + fname + '_zAmps_vel.mat', 'r') as h5file:
         #     ampVels.append(h5file['ampvel'][:].T.squeeze())
 
@@ -202,6 +215,7 @@ def findWatershedRegions(parameters, minimum_regions=150, startsigma=0.1, pThres
         zValLens.append(zValues[-1].shape[0])
 
     zValues = np.concatenate(zValues, 0)
+    #print(zValues.shape)
     ampVels = np.concatenate(ampVels, 0)
     # print(zValLens)
     zValLens = np.array(zValLens)
@@ -211,13 +225,13 @@ def findWatershedRegions(parameters, minimum_regions=150, startsigma=0.1, pThres
 
     print('Assigning watershed regions...')
     watershedRegions = np.digitize(zValues, xx)
-    print("THIS IS PRINGINT",watershedRegions)
+    #print("THIS IS PRINGINT",watershedRegions)
     watershedRegions = LL[watershedRegions[:, 1], watershedRegions[:, 0]]
-    print("ANOTHER", watershedRegions)#THIS IS THE ONE THAT HAS REGIONS FOR STROKES
-    print("JUST TO CONFIRM", len(watershedRegions))
+    #print("ANOTHER", watershedRegions)#THIS IS THE ONE THAT HAS REGIONS FOR STROKES
+    #print("JUST TO CONFIRM", len(watershedRegions))
     indexesWatershedRegions = watershedRegions.copy()
 
-    print("WHAT'S THIS", parameters.method)
+    #print("WHAT'S THIS", parameters.method)
 
     if parameters.method == 'TSNE':
         
@@ -259,5 +273,6 @@ def findWatershedRegions(parameters, minimum_regions=150, startsigma=0.1, pThres
                       matlab_compatible=True)
 
     print('All data saved in %s.'%(tsnefolder.split('/')[-2]+'/zVals_wShed_groups.mat'))
+
 
 
