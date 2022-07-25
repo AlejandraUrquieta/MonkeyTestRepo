@@ -726,7 +726,7 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
         print('Finding Wavelets')
         #print(projections.shape)
         zValues = []
-        for proj in projections:
+        for i, proj in enumerate(projections):
 
             #print(proj)
             #print(proj.shape)
@@ -737,6 +737,19 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
             #print(data.shape)
 
             data = data / np.sum(data, 1)[:, None]
+
+            
+
+
+            print(data.shape)
+
+            if ~np.all(np.isfinite(data)):
+                print("Stroke",i)
+
+                print("findEmbeddings 741",np.max(data))
+
+                print(data)
+
 
             print('Finding Embeddings')
             t1 = time.time()
