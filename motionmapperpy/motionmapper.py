@@ -62,6 +62,8 @@ def run_UMAP(data, parameters, save_model=True):
     y = y - trainmean
     y = y * scale
 
+
+
     if save_model:
         print('Saving UMAP model to disk...')
         np.save(umapfolder+'_trainMeanScale.npy', np.array([trainmean, scale], dtype=object))
@@ -500,9 +502,13 @@ def subsampled_tsne_from_projections(parameters,results_directory):
 def returnCorrectSigma_sparse(ds, perplexity, tol,maxNeighbors):
 
     highGuess = np.max(ds)
+    print("ds", ds)
+    print("highGuess",highGuess)
     lowGuess = 1e-10
+    print("lowGuess", lowGuess)
 
     sigma = .5*(highGuess + lowGuess)
+    print("sigma", sigma)
 
     dsize = ds.shape
     sortIdx = np.argsort(ds)
@@ -570,9 +576,12 @@ def calculateKLCost(x,ydata,ps):
 
 
 def TDistProjs(i, q, perplexity, sigmaTolerance, maxNeighbors, trainingEmbedding, readout, waveletDecomp):
+    print("is this printing")
     if (i+1)%readout == 0:
         t1 = time.time()
         print('\t\t Calculating Sigma Image #%5i'% (i+1))
+
+    print("q", q)
     _, p = returnCorrectSigma_sparse(q, perplexity, sigmaTolerance, maxNeighbors)
 
     if (i+1)%readout == 0:
@@ -650,6 +659,8 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
         numProcessors = parameters.numProcessors
     # ctx = mp.get_context('spawn')
 
+    print("batches",batches)
+
     for j in range(batches):
         print('\t Processing batch #%4i out of %4i'%(j+1,batches))
         idx = np.arange(batchSize) + j*batchSize
@@ -674,6 +685,10 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
         print('\t Calculating fminProjections for batch %4i' % (j + 1))
         t1 = time.time()
         pool = mp.Pool(numProcessors)
+        print("len idx", len(idx))
+        #for i in range(len(idx)):
+            #print("i",i)
+            #print("D2[i, :]", D2[i, :])
         outs = pool.starmap(TDistProjs, [(i, D2[i,:], perplexity, sigmaTolerance, maxNeighbors, trainingEmbedding, readout, parameters.waveletDecomp)
                             for i in range(len(idx))])
 
@@ -712,6 +727,8 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
         #print(projections.shape)
         zValues = []
         for proj in projections:
+
+            #print(proj)
             #print(proj.shape)
             data, f = mm_findWavelets(proj, numModes, parameters)
             if parameters.useGPU >= 0:
@@ -776,6 +793,7 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
 
             zValues.append(zVal)
+            #print(zVal)
 
 
 
