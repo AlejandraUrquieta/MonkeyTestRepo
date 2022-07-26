@@ -92,7 +92,7 @@ def get_strokes(dataTotal,num):
 
 # function to run subsampled tsne
 def sub_tsne(parameters):
-	mmpy.subsampled_tsne_from_projections(parameters, parameters.projectPath)
+	mmpy.subsampled_tsne_from_projections(parameters, parameters.projectPathNots)
 
 # function to run tsne for all data
 def total_tsne(parameters):
@@ -100,16 +100,17 @@ def total_tsne(parameters):
 	tall = time.time()
 
 
-
 	import h5py
 	tfolder = parameters.projectPath+'/%s/'%parameters.method
 
+	tfolderLoading = parameters.projectPathNots+'/%s/'%parameters.method
+
 	# Loading training data
-	with h5py.File(tfolder + 'training_data.mat', 'r') as hfile:
+	with h5py.File(tfolderLoading + 'training_data.mat', 'r') as hfile:
 	    trainingSetData = hfile['trainingSetData'][:].T
 
 	# Loading training embedding
-	with h5py.File(tfolder+ 'training_embedding.mat', 'r') as hfile:
+	with h5py.File(tfolderLoading+ 'training_embedding.mat', 'r') as hfile:
 	    trainingEmbedding= hfile['trainingEmbedding'][:].T
 
 	if parameters.method == 'TSNE':
@@ -119,7 +120,7 @@ def total_tsne(parameters):
 
 
 
-	projectionFiles = glob.glob(parameters.projectPath+'/Projections/*notpca.mat')
+	projectionFiles = glob.glob(parameters.projectPathNots+'/Projections/*notpca.mat')
 
 
 
@@ -274,6 +275,10 @@ if __name__=="__main__":
 
 	mmpy.createProjectDirectory(projectPath)
 
+
+	projectPathNots = 'content/trial1_mmpy'
+
+
 	#%matplotlib inline
 
 
@@ -296,6 +301,7 @@ if __name__=="__main__":
 	# These need to be revised everytime you are working with a new dataset. #
 
 	parameters.projectPath = projectPath #% Full path to the project directory.
+	parameters.projectPathNots = projectPathNots
 
 
 	#parameters.method = 'UMAP' #% We can choose between 'TSNE' or 'UMAP'
@@ -367,9 +373,12 @@ if __name__=="__main__":
 
 	#projectionFiles = glob.glob(parameters.projectPath+'/Projections/*test_monkey_notPCA.mat')
 
-	sub_tsne(parameters)
+	#sub_tsne(parameters)
+
 
 	total_tsne(parameters)
+
+
 
 
 

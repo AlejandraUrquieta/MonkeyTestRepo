@@ -575,16 +575,64 @@ def returnCorrectSigma_sparse(ds, perplexity, tol,maxNeighbors):
 def findListKLDivergences(data, data2):
     logData = np.log(data)
 
+    if ~np.all(np.isfinite(logData)) | ~np.all(np.isfinite(data2)):
+        print("logData",logData)
+        print("logData.shape", logData.shape)
+
+        print("trainingData", data2)
+        print("findListKLDivergences 581")
+        assert False
+
+
     entropies = -np.sum(np.multiply(data,logData), 1)
+    
+    if ~np.all(np.isfinite(entropies)):
+        print("logData",logData)
+        print("logData.shape", logData.shape)
+
+        print("trainingData", data2)
+        print("findListKLDivergences 594")
+
+        print("entropies", entropies)
+
+        assert False
+
+
     del logData
 
     logData2 = np.log(data2)
+    
+    if ~np.all(np.isfinite(logData)) | ~np.all(np.isfinite(logData2)):
+        print("logData",logData)
+        print("logData.shape", logData.shape)
+
+        print("logData2", logData2)
+        print("findListKLDivergences 610")
+        assert False
+
+
 
     D = - np.dot(data,logData2.T)
 
+    if ~np.all(np.isfinite(D)):
+        print("D", D)
+        print("D.shape", D.shape)
+        print("findListKLDivergences 620")
+        print("logData2", logData2)
+
+        assert False
+        
+
+
     D = D - entropies[:,None]
 
+
+
+
     D = D / np.log(2)
+
+
+
     return D,entropies
 
 
