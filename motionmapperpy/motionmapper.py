@@ -274,6 +274,7 @@ def file_embeddingSubSampling(projectionFile, parameters):
             sd = sd[rowindx:rowindx+1, :]
             sa = sa[rowindx:rowindx+1]
 
+
             
             '''
             print(sa.shape)
@@ -310,6 +311,24 @@ def file_embeddingSubSampling(projectionFile, parameters):
         #assert False, "coinfirm shapes, then remove this assertiuon line to contineu"
         signalAmps = np.concatenate(list_sa, axis=0)
         signalData = np.concatenate(list_sd, axis=0)
+
+
+        results_directory = parameters.projectPath
+
+        tsne_directory= results_directory+'/TSNE/'
+
+
+
+        print("this wors?")
+
+        hdf5storage.write(data={'signalData': signalData}, path='/', truncate_existing=True,
+                      filename=tsne_directory+'/signalData.mat', store_python_metadata=False,
+                      matlab_compatible=True)
+
+        hdf5storage.write(data={'signalAmps': signalAmps}, path='/', truncate_existing=True,
+                      filename=tsne_directory + '/signalAmps.mat', store_python_metadata=False,
+                      matlab_compatible=True)
+        
         #print(signalAmps.shape)
         #print(signalData.shape)
         #assert False, "confirm shapes are as expected"
@@ -671,6 +690,12 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
         print("idx2",idx)
         print("batches", batches)
 
+        print("currentData",currentData)
+        print("currentData.shape",currentData.shape)
+        print("currentData[0]", currentData[0])
+        print("currentData[0].shape", currentData[0].shape)
+
+
         if ~np.all(np.isfinite(currentData)):
                 print("findTDistributedProjections_fmin 675", np.max(currentData))
                 print("currentData",currentData)
@@ -692,7 +717,9 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
             if ~np.all(np.isfinite(D2)):
                 print("findTDistributedProjections_fmin 693", np.max(D2))
                 print("D2",D2)
-                print("D2 shape",D2[0].shape)
+                print("D2.shape",D2.shape)
+                print("D2[0]", D2[0])
+                print("D2[0].shape", D2[0].shape)
                 assert False
 
 
