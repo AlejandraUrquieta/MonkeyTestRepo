@@ -617,7 +617,7 @@ def findListKLDivergences(data, data2):
         print("D", D)
         print("D.shape", D.shape)
         print("findListKLDivergences 595")
-                print("logData2", logData2)
+        print("logData2", logData2)
 
 
         assert False
