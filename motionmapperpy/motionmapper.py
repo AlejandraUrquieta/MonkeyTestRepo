@@ -399,7 +399,8 @@ def runEmbeddingSubSampling(projectionDirectory, parameters):
         trainingSetAmps -> Nx1 array of training set wavelet amplitudes
         projectionFiles -> list of files in 'projectionDirectory'
     """
-    parameters = setRunParameters(parameters)
+    
+    #parameters = setRunParameters(parameters)
     projectionFiles = glob.glob(projectionDirectory+'/*notpca.mat')
     
     N = parameters.trainingSetSize
@@ -602,9 +603,7 @@ def findListKLDivergences(data, data2):
 
     logData2 = np.log(data2)
     
-    if ~np.all(np.isfinite(logData)) | ~np.all(np.isfinite(logData2)):
-        print("logData",logData)
-        print("logData.shape", logData.shape)
+    if ~np.all(np.isfinite(logData2)):
 
         print("logData2", logData2)
         print("findListKLDivergences 610")
@@ -617,21 +616,28 @@ def findListKLDivergences(data, data2):
     if ~np.all(np.isfinite(D)):
         print("D", D)
         print("D.shape", D.shape)
-        print("findListKLDivergences 620")
-        print("logData2", logData2)
+        print("findListKLDivergences 595")
+                print("logData2", logData2)
+
 
         assert False
-        
+
 
 
     D = D - entropies[:,None]
 
-
+    if ~np.all(np.isfinite(D)):
+        print("D", D)
+        print("D.shape", D.shape)
+        print("findListKLDivergences 603")
 
 
     D = D / np.log(2)
 
-
+    if ~np.all(np.isfinite(D)):
+        print("D", D)
+        print("D.shape", D.shape)
+        print("findListKLDivergences 611")
 
     return D,entropies
 
