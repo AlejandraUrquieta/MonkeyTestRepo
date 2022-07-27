@@ -122,6 +122,8 @@ def total_tsne(parameters):
 
 	projectionFiles = glob.glob(parameters.projectPathNots+'/Projections/*notpca.mat')
 
+	projectionFilestoSave =  glob.glob(parameters.projectPath+'/Projections/*notpca.mat')
+
 
 
 	for i in range(len(projectionFiles)):
@@ -144,11 +146,11 @@ def total_tsne(parameters):
 
 	    # Save embeddings
 	    hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True,
-	                    filename = projectionFiles[i][:-4]+'_%s.mat'%(zValstr), store_python_metadata = False,
+	                    filename = projectionFilestoSave[i][:-4]+'_%s.mat'%(zValstr), store_python_metadata = False,
 	                      matlab_compatible = True)
 	    
 	    # Save output statistics
-	    with open(projectionFiles[i][:-4] + '_%s_outputStatistics.pkl'%(zValstr), 'wb') as hfile:
+	    with open(projectionFilestoSave[i][:-4] + '_%s_outputStatistics.pkl'%(zValstr), 'wb') as hfile:
 	        pickle.dump(outputStatistics, hfile)
 
 	    del zValues,projections,outputStatistics
@@ -362,14 +364,14 @@ if __name__=="__main__":
 	writeDictToYaml(parameters, projectPath+'/parameters.yaml')
 
 
-	D = Dataset(path_list, append_list)
-	dataTotal = get_dataTotal(D)
-	get_strokeIndexes(dataTotal)
+	#D = Dataset(path_list, append_list)
+	#dataTotal = get_dataTotal(D)
+	#get_strokeIndexes(dataTotal)
 
-	projections = get_strokes(dataTotal,5125)
-	print('%s/Projections/test_monkey_notpca.mat'%(projectPath))
+	#projections = get_strokes(dataTotal,5125)
+	#print('%s/Projections/test_monkey_notpca.mat'%(projectPath))
 
-	hdf5storage.savemat('%s/Projections/test_monkey_notpca.mat'%(projectPath), {"projections" : projections})
+	#hdf5storage.savemat('%s/Projections/test_monkey_notpca.mat'%(projectPath), {"projections" : projections})
 
 	#projectionFiles = glob.glob(parameters.projectPath+'/Projections/*test_monkey_notPCA.mat')
 

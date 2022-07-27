@@ -321,13 +321,6 @@ def file_embeddingSubSampling(projectionFile, parameters):
 
         print("this wors?")
 
-        hdf5storage.write(data={'signalData': signalData}, path='/', truncate_existing=True,
-                      filename=tsne_directory+'/signalData.mat', store_python_metadata=False,
-                      matlab_compatible=True)
-
-        hdf5storage.write(data={'signalAmps': signalAmps}, path='/', truncate_existing=True,
-                      filename=tsne_directory + '/signalAmps.mat', store_python_metadata=False,
-                      matlab_compatible=True)
         
         #print(signalAmps.shape)
         #print(signalData.shape)
@@ -409,8 +402,8 @@ def runEmbeddingSubSampling(projectionDirectory, parameters):
     numModes = parameters.pcaModes
     numPeriods = parameters.numPeriods
     
-    print(numPerDataSet)
-    print(parameters.training_numPoints)
+    #print(numPerDataSet)
+    #print(parameters.training_numPoints)
 
     if numPerDataSet > parameters.training_numPoints:
         raise ValueError("miniTSNE size is %i samples per file which is low for current trainingSetSize which "
