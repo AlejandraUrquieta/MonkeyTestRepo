@@ -743,6 +743,7 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
         print("currentData[0].shape", currentData[0].shape)
 
 
+
         if ~np.all(np.isfinite(currentData)):
                 print("findTDistributedProjections_fmin 675", np.max(currentData))
                 print("currentData",currentData)
@@ -788,10 +789,7 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
                 print("D2 shape",D2[0].shape)
 
         ''' 
-
-
-
-        else:
+        else:            
             print('\t Calculating distances for batch %4i' % (j + 1))
             t1 = time.time()
             D2 = distance.cdist(currentData, trainingData, metric='sqeuclidean')
