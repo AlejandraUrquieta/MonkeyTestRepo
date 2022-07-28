@@ -789,7 +789,7 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
                 print("D2 shape",D2[0].shape)
 
         ''' 
-        else:            
+        else:           
             print('\t Calculating distances for batch %4i' % (j + 1))
             t1 = time.time()
             D2 = distance.cdist(currentData, trainingData, metric='sqeuclidean')
