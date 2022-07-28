@@ -787,14 +787,15 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
                 print("findTDistributedProjections_fmin", np.max(D2))
                 print("D2",D2)
                 print("D2 shape",D2[0].shape)
-
-        ''' 
+            ''' 
+        '''
         else:           
             print('\t Calculating distances for batch %4i' % (j + 1))
             t1 = time.time()
             D2 = distance.cdist(currentData, trainingData, metric='sqeuclidean')
             print('\t Calculated distances for batch %4i %0.02fseconds.' % (j + 1, time.time() - t1))
 
+        '''
         print('\t Calculating fminProjections for batch %4i' % (j + 1))
         t1 = time.time()
         pool = mp.Pool(numProcessors)
