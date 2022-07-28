@@ -80,7 +80,7 @@ def run_tSne(data, parameters=None):
     :return:
             yData -> N x 2 array of embedding results
     """
-    parameters = setRunParameters(parameters)
+    #parameters = setRunParameters(parameters)
 
     vals = np.sum(data, 1)
     if ~np.all(vals == 1):
@@ -771,7 +771,7 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
 
 
 
-
+'''
         if parameters.waveletDecomp:
             if np.sum(currentData==0):
                 print('Zeros found in wavelet data at following positions. Will replace then with 1e-12.')
@@ -787,7 +787,7 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
                 print("D2",D2)
                 print("D2 shape",D2[0].shape)
 
-
+'''
 
 
 
@@ -840,12 +840,30 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
     if parameters.waveletDecomp:
         print('Finding Wavelets')
         #print(projections.shape)
+
+
+        #trying to save data and f to plot wavelets later on
+        #wvlets[]
+        #fs[]
+
+
         zValues = []
         for i, proj in enumerate(projections):
 
             #print(proj)
             #print(proj.shape)
             data, f = mm_findWavelets(proj, numModes, parameters)
+
+
+
+#rowindx = int(zVal.shape[0]/2)
+
+            zVal = zVal[rowindx:rowindx+1,:]
+            #trying to save data and f to plot wavelets later on
+            #ri = int(data.shape[0]/2)
+            #wvlet = data[]
+
+
             if parameters.useGPU >= 0:
                 data = data.get()
 
