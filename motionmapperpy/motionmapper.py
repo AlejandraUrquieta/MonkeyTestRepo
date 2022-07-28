@@ -771,7 +771,7 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
 
 
 
-'''
+        '''
         if parameters.waveletDecomp:
             if np.sum(currentData==0):
                 print('Zeros found in wavelet data at following positions. Will replace then with 1e-12.')
@@ -787,7 +787,7 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
                 print("D2",D2)
                 print("D2 shape",D2[0].shape)
 
-'''
+        ''' 
 
 
 
@@ -856,7 +856,7 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
 
 
-#rowindx = int(zVal.shape[0]/2)
+            #rowindx = int(zVal.shape[0]/2)
 
             zVal = zVal[rowindx:rowindx+1,:]
             #trying to save data and f to plot wavelets later on
