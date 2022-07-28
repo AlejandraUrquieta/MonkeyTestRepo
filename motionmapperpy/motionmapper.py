@@ -858,7 +858,7 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
             #rowindx = int(zVal.shape[0]/2)
 
-            zVal = zVal[rowindx:rowindx+1,:]
+            #zVal = zVal[rowindx:rowindx+1,:]
             #trying to save data and f to plot wavelets later on
             #ri = int(data.shape[0]/2)
             #wvlet = data[]
