@@ -151,8 +151,8 @@ def total_tsne(parameters):
 
 	    # Saving wlets from total data
       hdf5storage.write(data = {'wavelets': wlets}, path = '/', truncate_existing = True,
-                        filename = parameters.projectPath+'/Projections/'+'_%s.mat'%('wlets'), store_python_metadata = False,
-                          matlab_compatible = True)
+                      filename = parameters.projectPath+'/Projections/'+'_%s.mat'%('wlets'), store_python_metadata = False,
+                        matlab_compatible = True)
 	    
 	    # Save output statistics
 	    with open(parameters.projectPath+'/Projections/'+ '_%s_outputStatistics.pkl'%(zValstr), 'wb') as hfile:
