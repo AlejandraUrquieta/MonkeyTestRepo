@@ -150,7 +150,7 @@ def total_tsne(parameters):
 	                      matlab_compatible = True)
 
 	    # Saving wlets from total data
-        hdf5storage.write(data = {'wavelets': wlets}, path = '/', truncate_existing = True,
+      hdf5storage.write(data = {'wavelets': wlets}, path = '/', truncate_existing = True,
                         filename = parameters.projectPath+'/Projections/'+'_%s.mat'%('wlets'), store_python_metadata = False,
                           matlab_compatible = True)
 	    
