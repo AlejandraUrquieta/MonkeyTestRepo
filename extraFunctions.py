@@ -17,10 +17,8 @@ def get_zValues_array(parameters, zValstr):
         zValues.append(item)
     zValues = np.array(zValues)
     return zValues
-def get_wavelets_and_freqs_array(parameters):
-    wlets = hdf5storage.loadmat(glob.glob(parameters.projectPath+'/TSNE/*_%s.mat'%('data'))[0])['trainingSetData']
-    freqs = hdf5storage.loadmat(glob.glob(parameters.projectPath+'/TSNE/*_%s.mat'%('amps'))[0])['trainingSetAmps']
 
-
-    return wlets, freqs
+def get_wavelets(parameters):
+    wlets = hdf5storage.loadmat(glob.glob(parameters.projectPath+'/Projections/*_%s.mat'%('wlets'))[0])['wavelets']
+    return wlets
 

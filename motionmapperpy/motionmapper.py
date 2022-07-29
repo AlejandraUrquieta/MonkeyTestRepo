@@ -843,8 +843,8 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
 
         #trying to save data and f to plot wavelets later on
-        #wvlets[]
-        #fs[]
+        wvlets = []
+
 
 
         zValues = []
@@ -852,6 +852,7 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
             #print(proj)
             #print(proj.shape)
+            #data being amplitudes
             data, f = mm_findWavelets(proj, numModes, parameters)
 
 
@@ -860,8 +861,8 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
             #zVal = zVal[rowindx:rowindx+1,:]
             #trying to save data and f to plot wavelets later on
-            #ri = int(data.shape[0]/2)
-            #wvlet = data[]
+            ri = int(data.shape[0]/2)
+            wvlet = data[ri:ri+1, :]
 
 
             if parameters.useGPU >= 0:
@@ -939,6 +940,7 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
 
             zValues.append(zVal)
+            wlets.append(wvlet)
             #print(zVal)
 
 
@@ -993,5 +995,5 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
 
     
-    return zValues,outputStatistics
+    return zValues,outputStatistics, wlets
 
