@@ -940,7 +940,7 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
 
             zValues.append(zVal)
-            wlets.append(wvlet)
+            wvlets.append(wvlet)
             #print(zVal)
 
 
@@ -995,5 +995,5 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
 
     
-    return zValues,outputStatistics, wlets
+    return zValues,outputStatistics, wvlets
 
