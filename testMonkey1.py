@@ -142,7 +142,7 @@ def total_tsne(parameters):
 	    projections = np.array(hdf5storage.loadmat(projectionFiles[i])['projections'])
 
 	    # Find Embeddings
-	    zValues, outputStatistics = mmpy.findEmbeddings(projections,trainingSetData,trainingEmbedding,parameters)
+	    zValues, outputStatistics, wvlets = mmpy.findEmbeddings(projections,trainingSetData,trainingEmbedding,parameters)
 
 	    # Save embeddings
 	    hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True,
