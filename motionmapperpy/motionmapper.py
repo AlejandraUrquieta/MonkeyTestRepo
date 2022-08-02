@@ -33,7 +33,6 @@ def findKLDivergences(data):
     entropies = -np.sum(np.multiply(data, logData), 1)
 
     D = - np.dot(data, logData.T)
-
    
     D= D - entropies[:,None]
 
@@ -61,8 +60,6 @@ def run_UMAP(data, parameters, save_model=True):
     scale = (parameters['rescale_max']/np.abs(y).max())
     y = y - trainmean
     y = y * scale
-
-
 
     if save_model:
         print('Saving UMAP model to disk...')
@@ -213,6 +210,9 @@ def file_embeddingSubSampling(projectionFile, parameters):
     print('\t Loading Projections')
     print('test')
     VERSION = 'monkey'
+    
+    projections_in = np.array(hdf5storage.loadmat(projectionFiles[0])['projections'])
+    '''
     try:
         #projections_in = np.array(loadmat(projectionFile, variable_names=['projections'])['projections'])
 
@@ -233,7 +233,7 @@ def file_embeddingSubSampling(projectionFile, parameters):
         with h5py.File(projectionFile, 'r') as hfile:
             projections = hfile['projections'][:].T
         projections = np.array(projections)
-    
+    '''
     if VERSION=='default':
         if projections.shape[0] < numPoints:
             raise ValueError('Training number of points for miniTSNE is greater than # samples in some files. Please '
@@ -241,6 +241,7 @@ def file_embeddingSubSampling(projectionFile, parameters):
         
     if VERSION=="default":
         signalAmps, signalData, signalIdx = get_wavelet(projections)
+    
     elif VERSION=='monkey':
         # Do this in a loop, once for each projection in the list
         list_sa = []
@@ -270,11 +271,8 @@ def file_embeddingSubSampling(projectionFile, parameters):
             #sd = sd[3*a:b-3*a, :]
             #sa = sa[3*a:b-3*a]
 
-
             sd = sd[rowindx:rowindx+1, :]
             sa = sa[rowindx:rowindx+1]
-
-
             
             '''
             print(sa.shape)
@@ -295,9 +293,7 @@ def file_embeddingSubSampling(projectionFile, parameters):
             #fig, axes = plt.subplots(2, 1, figsize=(20,18))
             #ax = axes.flatten()[0]
             #ax.imshow(sd.T, cmap='PuRd', origin='lower')
-            #assert False
-            
-            
+            #assert False            
             list_sa.append(sa)
             list_sd.append(sd)
         # concatenate
@@ -340,12 +336,8 @@ def file_embeddingSubSampling(projectionFile, parameters):
         raise ValueError('Supported parameter.method are \'TSNE\' or \'UMAP\'')
     return yData,signalData,signalIdx,signalAmps
 
-#def 
-
-
 def get_wavelet(projections, parameters):
     numPoints = parameters.training_numPoints
-    
     N = len(projections)
     numModes = parameters.pcaModes
     skipLength = np.floor(N / numPoints).astype(int)
@@ -358,7 +350,6 @@ def get_wavelet(projections, parameters):
     if parameters.waveletDecomp:
         print('\t Calculating Wavelets')
         data, _ = mm_findWavelets(projections, numModes, parameters)
-       
         signalIdx = np.indices((data.shape[0],))[0]
         signalIdx = signalIdx[firstFrame:int(firstFrame + (numPoints) * skipLength): skipLength]
         if parameters.useGPU >= 0:
@@ -392,7 +383,6 @@ def runEmbeddingSubSampling(projectionDirectory, parameters):
         trainingSetAmps -> Nx1 array of training set wavelet amplitudes
         projectionFiles -> list of files in 'projectionDirectory'
     """
-    
     #parameters = setRunParameters(parameters)
     projectionFiles = glob.glob(projectionDirectory+'/*notpca.mat')
     
@@ -402,9 +392,6 @@ def runEmbeddingSubSampling(projectionDirectory, parameters):
     numModes = parameters.pcaModes
     numPeriods = parameters.numPeriods
     
-    #print(numPerDataSet)
-    #print(parameters.training_numPoints)
-
     if numPerDataSet > parameters.training_numPoints:
         raise ValueError("miniTSNE size is %i samples per file which is low for current trainingSetSize which "
                          "requries %i samples per file. "
@@ -515,13 +502,13 @@ def subsampled_tsne_from_projections(parameters,results_directory):
 def returnCorrectSigma_sparse(ds, perplexity, tol,maxNeighbors):
 
     highGuess = np.max(ds)
-    print("ds", ds)
-    print("highGuess",highGuess)
+    #print("ds", ds)
+    #print("highGuess",highGuess)
     lowGuess = 1e-10
-    print("lowGuess", lowGuess)
+    #print("lowGuess", lowGuess)
 
     sigma = .5*(highGuess + lowGuess)
-    print("sigma", sigma)
+    #print("sigma", sigma)
 
     dsize = ds.shape
     sortIdx = np.argsort(ds)
@@ -570,68 +557,58 @@ def findListKLDivergences(data, data2):
     logData = np.log(data)
 
     if ~np.all(np.isfinite(logData)) | ~np.all(np.isfinite(data2)):
-        print("logData",logData)
-        print("logData.shape", logData.shape)
-
-        print("trainingData", data2)
-        print("findListKLDivergences 581")
+        #print("logData",logData)
+        #print("logData.shape", logData.shape)
+        #print("trainingData", data2)
+        print("findListKLDivergences 564")
         assert False
 
 
     entropies = -np.sum(np.multiply(data,logData), 1)
     
     if ~np.all(np.isfinite(entropies)):
-        print("logData",logData)
-        print("logData.shape", logData.shape)
+        #print("logData",logData)
+        #print("logData.shape", logData.shape)
 
-        print("trainingData", data2)
-        print("findListKLDivergences 594")
-
-        print("entropies", entropies)
-
+        #print("trainingData", data2)
+        print("findListKLDivergences 575")
+        #print("entropies", entropies)
         assert False
-
 
     del logData
 
     logData2 = np.log(data2)
     
     if ~np.all(np.isfinite(logData2)):
-
-        print("logData2", logData2)
-        print("findListKLDivergences 610")
+        #print("logData2", logData2)
+        print("findListKLDivergences 584")
         assert False
-
-
 
     D = - np.dot(data,logData2.T)
 
     if ~np.all(np.isfinite(D)):
-        print("D", D)
-        print("D.shape", D.shape)
-        print("findListKLDivergences 595")
-        print("logData2", logData2)
-
-
+        #print("D", D)
+        #print("D.shape", D.shape)
+        print("findListKLDivergences 592")
+        #print("logData2", logData2)
         assert False
-
-
 
     D = D - entropies[:,None]
 
     if ~np.all(np.isfinite(D)):
-        print("D", D)
-        print("D.shape", D.shape)
-        print("findListKLDivergences 603")
-
+        #print("D", D)
+        #print("D.shape", D.shape)
+        print("findListKLDivergences 601")
+        assert False
 
     D = D / np.log(2)
 
     if ~np.all(np.isfinite(D)):
-        print("D", D)
-        print("D.shape", D.shape)
-        print("findListKLDivergences 611")
-
+        #print("D", D)
+        #print("D.shape", D.shape)
+        print("findListKLDivergences 609")
+        assert False
+    
     return D,entropies
 
 
@@ -642,12 +619,11 @@ def calculateKLCost(x,ydata,ps):
 
 
 def TDistProjs(i, q, perplexity, sigmaTolerance, maxNeighbors, trainingEmbedding, readout, waveletDecomp):
-    print("is this printing")
+    #print("is this printing")
     if (i+1)%readout == 0:
         t1 = time.time()
         print('\t\t Calculating Sigma Image #%5i'% (i+1))
-
-    print("q", q)
+    #print("q", q)
     _, p = returnCorrectSigma_sparse(q, perplexity, sigmaTolerance, maxNeighbors)
 
     if (i+1)%readout == 0:
@@ -725,32 +701,27 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
         numProcessors = parameters.numProcessors
     # ctx = mp.get_context('spawn')
 
-    print("batches",batches)
+    #print("batches",batches)
 
     for j in range(batches):
         print('\t Processing batch #%4i out of %4i'%(j+1,batches))
         idx = np.arange(batchSize) + j*batchSize
-        print("idx1",idx)
-
+        #print("idx1",idx)
         idx = idx[idx < N]
         currentData = data[idx,:]
-        print("idx2",idx)
-        print("batches", batches)
+        #print("idx2",idx)
+        #print("batches", batches)
 
-        print("currentData",currentData)
-        print("currentData.shape",currentData.shape)
-        print("currentData[0]", currentData[0])
-        print("currentData[0].shape", currentData[0].shape)
-
-
+        #print("currentData",currentData)
+        #print("currentData.shape",currentData.shape)
+        #print("currentData[0]", currentData[0])
+        #print("currentData[0].shape", currentData[0].shape)
 
         if ~np.all(np.isfinite(currentData)):
-                print("findTDistributedProjections_fmin 675", np.max(currentData))
-                print("currentData",currentData)
-                print("currentData shape",currentData[0].shape)
-                assert False
-
-        
+                print("findTDistributedProjections_fmin 721", np.max(currentData))
+                #print("currentData",currentData)
+                #print("currentData shape",currentData[0].shape)
+                assert False        
 
         if parameters.waveletDecomp:
             if np.sum(currentData==0):
@@ -763,15 +734,12 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
             print('\t Calculated distances for batch %4i %0.02fseconds.'%(j+1, time.time()-t1))
             
             if ~np.all(np.isfinite(D2)):
-                print("findTDistributedProjections_fmin 693", np.max(D2))
-                print("D2",D2)
-                print("D2.shape",D2.shape)
-                print("D2[0]", D2[0])
-                print("D2[0].shape", D2[0].shape)
+                print("findTDistributedProjections_fmin 737", np.max(D2))
+                #print("D2",D2)
+                #print("D2.shape",D2.shape)
+                #print("D2[0]", D2[0])
+                #print("D2[0].shape", D2[0].shape)
                 assert False
-
-
-
         '''
         if parameters.waveletDecomp:
             if np.sum(currentData==0):
@@ -789,14 +757,14 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
                 print("D2 shape",D2[0].shape)
             ''' 
         print("what")
-        '''
+
         else:           
             print('\t Calculating distances for batch %4i' % (j + 1))
             t1 = time.time()
             D2 = distance.cdist(currentData, trainingData, metric='sqeuclidean')
             print('\t Calculated distances for batch %4i %0.02fseconds.' % (j + 1, time.time() - t1))
 
-        '''
+
         print('\t Calculating fminProjections for batch %4i' % (j + 1))
         t1 = time.time()
         pool = mp.Pool(numProcessors)
@@ -818,7 +786,6 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
         print('\t Processed batch #%4i out of %4i in %0.02fseconds.\n'%(j+1, batches, time.time()-t1))
 
     zValues[~inConvHull,:] = zGuesses[~inConvHull,:]
-
     return zValues,zCosts,zGuesses,inConvHull,meanMax,exitFlags
 
 
@@ -840,49 +807,33 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
     if parameters.waveletDecomp:
         print('Finding Wavelets')
         #print(projections.shape)
-
-
         #trying to save data and f to plot wavelets later on
         wvlets = []
-
-
-
         zValues = []
         for i, proj in enumerate(projections):
-
             #print(proj)
             #print(proj.shape)
             #data being amplitudes
             data, f = mm_findWavelets(proj, numModes, parameters)
-
-
-
             #rowindx = int(zVal.shape[0]/2)
-
             #zVal = zVal[rowindx:rowindx+1,:]
             #trying to save data and f to plot wavelets later on
             ri = int(data.shape[0]/2)
             wvlet = data[ri:ri+1, :]
 
-
             if parameters.useGPU >= 0:
                 data = data.get()
-
             #print(data.shape)
 
             data = data / np.sum(data, 1)[:, None]
 
-            
-
-
-            print(data.shape)
+            #print(data.shape)
 
             if ~np.all(np.isfinite(data)):
-                print("Stroke",i)
-
+                #print("Stroke",i)
                 print("findEmbeddings 741",np.max(data))
-
-                print(data)
+                #print(data)
+                assert False
 
 
             print('Finding Embeddings')
@@ -942,13 +893,6 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
             zValues.append(zVal)
             wvlets.append(wvlet)
             #print(zVal)
-
-
-
-
-
-
-
     else:
         print('Using projections for tSNE. No wavelet decomposition.')
         f = 0
@@ -961,7 +905,6 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
     if parameters.method == 'TSNE':
         zValues, zCosts, zGuesses, inConvHull, meanMax, exitFlags = findTDistributedProjections_fmin(data,
                                                                                 trainingData, trainingEmbedding, parameters)
-
         outputStatistics = edict()
         outputStatistics.zCosts = zCosts
         outputStatistics.f = f
@@ -992,8 +935,5 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
     '''
     #print(zValues)
     #print(type(zValues))
-
-
-    
     return zValues,outputStatistics, wvlets
 

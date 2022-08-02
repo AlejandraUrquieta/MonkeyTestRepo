@@ -8,11 +8,7 @@ from skimage.filters import roberts
 from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
 from .mmutils import *
-
 import extraFunctions as ef
-
-
-
 bmapcmap = gencmap()
 
 
@@ -22,8 +18,6 @@ def wshedTransform(zValues, min_regions, sigma, tsnefolder, saveplot=True):
     bounds, xx, density = findPointDensity(zValues, sigma, 610,
                                                    rangeVals=[-np.abs(zValues).max() - 15, np.abs(zValues).max() + 15])
     wshed = watershed(-density, connectivity=10)
-
-
     wshed[density < 1e-5] = 0
     numRegs = len(np.unique(wshed)) - 1
 
@@ -43,8 +37,6 @@ def wshedTransform(zValues, min_regions, sigma, tsnefolder, saveplot=True):
     for i, wreg in enumerate(np.unique(wshed)):
         wshed[wshed == wreg] = i
     wbounds = np.where(roberts(wshed).astype('bool'))
-
-
     wbounds = (wbounds[1], wbounds[0])
     if saveplot:
         bend = plt.get_backend()
@@ -54,23 +46,18 @@ def wshedTransform(zValues, min_regions, sigma, tsnefolder, saveplot=True):
         fig.subplots_adjust(0, 0, 1, 1, 0, 0)
         ax = axes[0]
         ax.imshow(randomizewshed(wshed), origin='lower', cmap=bmapcmap)
-        a = randomizewshed(wshed)
-
         for i in np.unique(wshed)[1:]:
             fontsize = 8
             xinds, yinds = np.where(wshed == i)
             ax.text(np.mean(yinds) - fontsize, np.mean(xinds) - fontsize, str(i), fontsize=fontsize, fontweight='bold')
-
         ax.axis('off')
 
         ax = axes[1]
         ax.imshow(density, origin='lower', cmap=bmapcmap)
         ax.scatter(wbounds[0], wbounds[1], color='k', s=0.1)
-
         ax.axis('off')
 
         fig.savefig(tsnefolder + 'zWshed%i.png' % numRegs)
-
         plt.close()
         plt.switch_backend(bend)
     return wshed, wbounds, sigma, xx, density
@@ -183,19 +170,16 @@ def findWatershedRegions(parameters, minimum_regions=150, startsigma=0.1, pThres
             zValident = 'zVals' if parameters.waveletDecomp else 'zValsProjs'
         else:
             zValident = 'uVals'
-
         zVals = ef.get_zValues_array(parameters, zValident)
-        print(zVals.shape)
+        #print(zVals.shape)
         #with h5py.File(projectionfolder + fname + '_%s.mat'%zValident, 'r') as h5file:
             #print(h5file['zValues'][:].T)
             #assert False
         #with h5py.File('content/trial1_mmpy/Projections/test_monkey_notpca'+ '_%s.mat'%zValident, 'r') as h5file:
         zValues.append(zVals)
-        print(len(zValues))
-        
-
+        #print(len(zValues))
         ampVels.append(np.concatenate(([0], np.linalg.norm(np.diff(zValues[-1], axis=0), axis=1)), axis=0))
-        print(len(ampVels))
+        #print(len(ampVels))
         # with h5py.File(projectionfolder + fname + '_zAmps_vel.mat', 'r') as h5file:
         #     ampVels.append(h5file['ampvel'][:].T.squeeze())
 
@@ -222,7 +206,6 @@ def findWatershedRegions(parameters, minimum_regions=150, startsigma=0.1, pThres
     #print("WHAT'S THIS", parameters.method)
 
     if parameters.method == 'TSNE':
-        
         print('Calculating velocity distributions...')
         ampVels, pRest = velGMM(ampVels, parameters, parameters.projectPath, saveplot=saveplot)
 
