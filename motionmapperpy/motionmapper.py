@@ -756,8 +756,6 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
                 print("D2",D2)
                 print("D2 shape",D2[0].shape)
             ''' 
-        print("what")
-
         else:           
             print('\t Calculating distances for batch %4i' % (j + 1))
             t1 = time.time()
