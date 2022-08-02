@@ -1,31 +1,30 @@
 import pandas as pd
 import numpy as np
 import pickle 
-
 import glob, os, sys
-
 import time, copy
 from datetime import datetime
 import hdf5storage
-
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-
 from tqdm import tqdm 
-
 from scipy.ndimage import median_filter
-
 from matplotlib import rc
 rc('animation', html='jshtml')
-
 from pythonlib.dataset.dataset import Dataset
 from pythonlib.dataset.dataset_preprocess.general import preprocessDat
-
 import motionmapperpy as mmpy
-
 from pythonlib.tools.expttools import makeTimeStamp, writeDictToYaml
+import extraFunctions as ef
+from IPython.display import Image
+import random
+from pythonlib.drawmodel import strokePlots
+import math
+import matplotlib.image as mpimg
 
 
+
+'''
 # function to get data in the form of array dataTotal
 def get_dataTotal(D):
 	# x is the trial index there are 5125 trials so x < 5125
@@ -160,6 +159,8 @@ def total_tsne(parameters):
 
 
 	print('All Embeddings Saved in %i seconds!'%(time.time()-tall))
+'''
+#break
 '''
 # function to load embeddings plots and save them
 def save_embeddings():
@@ -368,10 +369,10 @@ if __name__=="__main__":
 
 
 	#D = Dataset(path_list, append_list)
-	#dataTotal = get_dataTotal(D)
-	#get_strokeIndexes(dataTotal)
+	#dataTotal = ef.get_dataTotal(D)
+	#list_trialstroke = ef.get_strokeIndexes(dataTotal)
 
-	#projections = get_strokes(dataTotal,5125)
+	#projections = ef.get_strokes(dataTotal,5125)
 	#print('%s/Projections/test_monkey_notpca.mat'%(projectPath))
 
 	#hdf5storage.savemat('%s/Projections/test_monkey_notpca.mat'%(projectPath), {"projections" : projections})
@@ -379,7 +380,6 @@ if __name__=="__main__":
 	#projectionFiles = glob.glob(parameters.projectPath+'/Projections/*test_monkey_notPCA.mat')
 
 	#sub_tsne(parameters)
-
 
 	total_tsne(parameters)
 

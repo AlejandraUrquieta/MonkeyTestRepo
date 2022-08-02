@@ -23,12 +23,9 @@ def wshedTransform(zValues, min_regions, sigma, tsnefolder, saveplot=True):
                                                    rangeVals=[-np.abs(zValues).max() - 15, np.abs(zValues).max() + 15])
     wshed = watershed(-density, connectivity=10)
 
-    #print("wshed", wshed)
-    #print("459",wshed[459])
 
     wshed[density < 1e-5] = 0
     numRegs = len(np.unique(wshed)) - 1
-    #print("numRegs",numRegs)
 
     if numRegs < min_regions - 10:
         raise ValueError('\t Starting sigma %0.1f too high, maximum # wshed regions possible is %i.' %
@@ -46,8 +43,7 @@ def wshedTransform(zValues, min_regions, sigma, tsnefolder, saveplot=True):
     for i, wreg in enumerate(np.unique(wshed)):
         wshed[wshed == wreg] = i
     wbounds = np.where(roberts(wshed).astype('bool'))
-    #print("wsehd now",wshed)
-    #print("459",wshed[459])
+
 
     wbounds = (wbounds[1], wbounds[0])
     if saveplot:
@@ -59,29 +55,21 @@ def wshedTransform(zValues, min_regions, sigma, tsnefolder, saveplot=True):
         ax = axes[0]
         ax.imshow(randomizewshed(wshed), origin='lower', cmap=bmapcmap)
         a = randomizewshed(wshed)
-        #print("SEE THIS", a.max())
+
         for i in np.unique(wshed)[1:]:
-            #print(np.unique(wshed)[1:])
             fontsize = 8
             xinds, yinds = np.where(wshed == i)
-            #print(xinds.shape)
-            #print(yinds)
             ax.text(np.mean(yinds) - fontsize, np.mean(xinds) - fontsize, str(i), fontsize=fontsize, fontweight='bold')
-            #print(np.mean(xinds))
-            #print(np.mean(yinds))
+
         ax.axis('off')
 
         ax = axes[1]
         ax.imshow(density, origin='lower', cmap=bmapcmap)
         ax.scatter(wbounds[0], wbounds[1], color='k', s=0.1)
-        #print("wboudns",wbounds[0])
-        #print("wbounds",wbounds[1].shape)
+
         ax.axis('off')
 
         fig.savefig(tsnefolder + 'zWshed%i.png' % numRegs)
-
-
-
 
         plt.close()
         plt.switch_backend(bend)
@@ -242,7 +230,7 @@ def findWatershedRegions(parameters, minimum_regions=150, startsigma=0.1, pThres
                    'density': density, 'LL': LL, 'watershedRegions': watershedRegions, 'v': ampVels, 'pRest': pRest,
                    'wbounds': wbounds, 'indexesWatershedRegions':indexesWatershedRegions}
         hdf5storage.write(data=outdict, path='/', truncate_existing=True,
-                          filename=tsnefolder + 'zVals_wShed_groups.mat', store_python_metadata=False,
+                          filename=tsnefolder + 'zVals_wShed_groups%s.mat'%(minimum_regions), store_python_metadata=False,
                           matlab_compatible=True)
 
         print('\t tempsave done.')
@@ -260,7 +248,7 @@ def findWatershedRegions(parameters, minimum_regions=150, startsigma=0.1, pThres
                'density':density, 'LL':LL, 'watershedRegions':watershedRegions, 'v':ampVels, 'pRest':pRest,
                'wbounds':wbounds}
     hdf5storage.write(data=outdict, path='/', truncate_existing=True,
-                          filename=tsnefolder + 'zVals_wShed_groups.mat', store_python_metadata=False,
+                          filename=tsnefolder + 'zVals_wShed_groups%s.mat'%(minimum_regions), store_python_metadata=False,
                           matlab_compatible=True)
     print('\t tempsave done.')
 
@@ -269,10 +257,10 @@ def findWatershedRegions(parameters, minimum_regions=150, startsigma=0.1, pThres
                'density': density, 'LL': LL, 'watershedRegions': watershedRegions, 'v': ampVels, #'pRest': pRest,
                'wbounds': wbounds, 'groups': groups, 'indexesWatershedRegions':indexesWatershedRegions}
     hdf5storage.write(data=outdict, path='/', truncate_existing=True,
-                      filename=tsnefolder + 'zVals_wShed_groups.mat', store_python_metadata=False,
+                      filename=tsnefolder + 'zVals_wShed_groups%s.mat'%(minimum_regions), store_python_metadata=False,
                       matlab_compatible=True)
 
-    print('All data saved in %s.'%(tsnefolder.split('/')[-2]+'/zVals_wShed_groups.mat'))
+    print('All data saved in %s.'%(tsnefolder.split('/')[-2]+'/zVals_wShed_groups%s.mat'%(minimum_regions)))
 
 
 
