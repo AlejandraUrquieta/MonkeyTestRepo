@@ -9,10 +9,13 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from tqdm import tqdm 
 from scipy.ndimage import median_filter
+from matplotlib import rc
+rc('animation', html='jshtml')
 from pythonlib.dataset.dataset import Dataset
 from pythonlib.dataset.dataset_preprocess.general import preprocessDat
 import motionmapperpy as mmpy
 from pythonlib.tools.expttools import makeTimeStamp, writeDictToYaml
+
 import extraFunctions as ef
 from IPython.display import Image
 import random

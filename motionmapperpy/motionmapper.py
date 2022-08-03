@@ -215,12 +215,12 @@ def file_embeddingSubSampling(projectionFile, parameters):
     VERSION = 'monkey'
     
     #projections_in = np.array(hdf5storage.loadmat(projectionFile)["projections"])
-    projections_in = np.array(mat73.loadmat(projectionFile)["projections"])
-    '''
+    #projections_in = np.array(mat73.loadmat(projectionFile)["projections"])
+    
     try:
         #projections_in = np.array(loadmat(projectionFile, variable_names=['projections'])['projections'])
 
-        import mat73
+        #import mat73
         projections_in = np.array(mat73.loadmat(projectionFile)["projections"])
         
         # 1) Load projections
@@ -237,7 +237,7 @@ def file_embeddingSubSampling(projectionFile, parameters):
         with h5py.File(projectionFile, 'r') as hfile:
             projections = hfile['projections'][:].T
         projections = np.array(projections)
-    '''
+    
     if VERSION=='default':
         if projections.shape[0] < numPoints:
             raise ValueError('Training number of points for miniTSNE is greater than # samples in some files. Please '
@@ -313,9 +313,9 @@ def file_embeddingSubSampling(projectionFile, parameters):
         signalData = np.concatenate(list_sd, axis=0)
 
 
-        #results_directory = parameters.projectPath
+        results_directory = parameters.projectPath
 
-        #tsne_directory= results_directory+'/TSNE/'
+        tsne_directory= results_directory+'/TSNE/'
 
 
 
@@ -388,7 +388,7 @@ def runEmbeddingSubSampling(projectionDirectory, parameters):
         projectionFiles -> list of files in 'projectionDirectory'
     """
     #see if this is the problem
-    parameters = setRunParameters(parameters)
+    #parameters = setRunParameters(parameters)
     projectionFiles = glob.glob(projectionDirectory+'/*notpca.mat')
     
     N = parameters.trainingSetSize
@@ -745,12 +745,13 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
                 #print("D2[0]", D2[0])
                 #print("D2[0].shape", D2[0].shape)
                 assert False
+        '''
         else:           
             print('\t Calculating distances for batch %4i' % (j + 1))
             t1 = time.time()
             D2 = distance.cdist(currentData, trainingData, metric='sqeuclidean')
             print('\t Calculated distances for batch %4i %0.02fseconds.' % (j + 1, time.time() - t1))
-
+        '''
         print('\t Calculating fminProjections for batch %4i' % (j + 1))
         print("hello0")
         t1 = time.time()
@@ -804,7 +805,9 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
         print('Finding Wavelets')
         #print(projections.shape)
         #trying to save data and f to plot wavelets later on
-        wvlets = []
+        
+        #maybe this is the problem?
+        #wvlets = []
         zValues = []
         for i, proj in enumerate(projections):
             #print(proj)
@@ -814,8 +817,10 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
             #rowindx = int(zVal.shape[0]/2)
             #zVal = zVal[rowindx:rowindx+1,:]
             #trying to save data and f to plot wavelets later on
-            ri = int(data.shape[0]/2)
-            wvlet = data[ri:ri+1, :]
+            
+            #maybe this is the problem?
+            #ri = int(data.shape[0]/2)
+            #wvlet = data[ri:ri+1, :]
 
             if parameters.useGPU >= 0:
                 data = data.get()
@@ -827,7 +832,7 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
             if ~np.all(np.isfinite(data)):
                 #print("Stroke",i)
-                print("findEmbeddings 741",np.max(data))
+                print("findEmbeddings 835",np.max(data))
                 #print(data)
                 assert False
 
@@ -888,7 +893,8 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
 
 
             zValues.append(zVal)
-            wvlets.append(wvlet)
+            #maybe this is the problem?
+            #wvlets.append(wvlet)
             #print(zVal)
     else:
         print('Using projections for tSNE. No wavelet decomposition.')
@@ -932,5 +938,6 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
     '''
     #print(zValues)
     #print(type(zValues))
-    return zValues,outputStatistics, wvlets
-
+    #maybe this is the problem?
+    #return zValues,outputStatistics, wvlets
+    return zValues, outputStatistics

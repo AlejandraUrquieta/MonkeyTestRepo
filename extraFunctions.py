@@ -157,16 +157,20 @@ def total_tsne(parameters):
         print("e")
 
         # Find Embeddings
-        zValues, outputStatistics, wvlets = mmpy.findEmbeddings(projections,trainingSetData,trainingEmbedding,parameters)
+        #zValues, outputStatistics, wvlets = mmpy.findEmbeddings(projections,trainingSetData,trainingEmbedding,parameters)
+        zValues, outputStatistics = mmpy.findEmbeddings(projections, trainingSetData, trainingEmbedding, parameters)
         print("f")
 
         # Save embeddings
         hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%(zValstr), store_python_metadata = False, matlab_compatible = True)
         print("g")
 
+        '''
+        # stop wavelets
         # Saving wlets from total data
         hdf5storage.write(data = {'wavelets':wlets}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%('wlets'), store_python_metadata = False, matlab_compatible = True)
         print("h")
+        '''
 
         # Save output statistics
         with open(parameters.projectPath+'/Projections/'+ '_%s_outputStatistics.pkl'%(zValstr), 'wb') as hfile:
