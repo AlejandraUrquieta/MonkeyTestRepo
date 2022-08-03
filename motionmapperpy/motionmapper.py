@@ -740,28 +740,11 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
                 #print("D2[0]", D2[0])
                 #print("D2[0].shape", D2[0].shape)
                 assert False
-        '''
-        if parameters.waveletDecomp:
-            if np.sum(currentData==0):
-                print('Zeros found in wavelet data at following positions. Will replace then with 1e-12.')
-                currentData[currentData==0] = 1e-12
-
-            print('\t Calculating distances for batch %4i'%(j+1))
-            t1 = time.time()
-            D2,_ = findListKLDivergences(currentData,trainingData)
-            print('\t Calculated distances for batch %4i %0.02fseconds.'%(j+1, time.time()-t1))
-            
-            if ~np.all(np.isfinite(D2)):
-                print("findTDistributedProjections_fmin", np.max(D2))
-                print("D2",D2)
-                print("D2 shape",D2[0].shape)
-            ''' 
         else:           
             print('\t Calculating distances for batch %4i' % (j + 1))
             t1 = time.time()
             D2 = distance.cdist(currentData, trainingData, metric='sqeuclidean')
             print('\t Calculated distances for batch %4i %0.02fseconds.' % (j + 1, time.time() - t1))
-
 
         print('\t Calculating fminProjections for batch %4i' % (j + 1))
         t1 = time.time()
