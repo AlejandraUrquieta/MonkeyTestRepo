@@ -747,7 +747,9 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
             print('\t Calculated distances for batch %4i %0.02fseconds.' % (j + 1, time.time() - t1))
 
         print('\t Calculating fminProjections for batch %4i' % (j + 1))
+        print("hello0")
         t1 = time.time()
+        print("hello00")
         pool = mp.Pool(numProcessors)
         print("hello1")
         #print("len idx", len(idx))
@@ -828,8 +830,9 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
             print('Finding Embeddings')
             t1 = time.time()
             if parameters.method == 'TSNE':
-                zVal, zCosts, zGuesses, inConvHull, meanMax, exitFlags = findTDistributedProjections_fmin(data,
-                                                                                        trainingData, trainingEmbedding, parameters)
+                print("Trying this?")
+                zVal, zCosts, zGuesses, inConvHull, meanMax, exitFlags = findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, parameters)
+                print("Trying this?2")
                 #print(zVal)
                 #print(zVal.shape)
 
