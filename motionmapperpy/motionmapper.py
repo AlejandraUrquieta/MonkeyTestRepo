@@ -749,20 +749,28 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
         print('\t Calculating fminProjections for batch %4i' % (j + 1))
         t1 = time.time()
         pool = mp.Pool(numProcessors)
-        print("len idx", len(idx))
+        print("hello1")
+        #print("len idx", len(idx))
         #for i in range(len(idx)):
             #print("i",i)
             #print("D2[i, :]", D2[i, :])
         outs = pool.starmap(TDistProjs, [(i, D2[i,:], perplexity, sigmaTolerance, maxNeighbors, trainingEmbedding, readout, parameters.waveletDecomp)
                             for i in range(len(idx))])
-
+        print("hello2")
         zGuesses[idx,:] = np.concatenate([out[0][:,None] for out in outs], axis=1).T
+        print("hello3")
         zValues[idx,:] = np.concatenate([out[1][:,None] for out in outs], axis=1).T
+        print("hello4")    
         zCosts[idx] = np.array([out[2] for out in outs])
+        print("hello5")
         inConvHull[idx] = np.array([out[3] for out in outs])
+        print("hello6")
         meanMax[idx] = np.array([out[4] for out in outs])
+        print("hello7")
         exitFlags[idx] = np.array([out[5] for out in outs])
+        print("hello8")
         pool.close()
+        print("hello9")
         pool.join()
         print('\t Processed batch #%4i out of %4i in %0.02fseconds.\n'%(j+1, batches, time.time()-t1))
 
