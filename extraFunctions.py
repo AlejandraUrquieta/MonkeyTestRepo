@@ -119,19 +119,22 @@ def total_tsne(parameters):
     # Loading training data
     with h5py.File(tfolderLoading + 'training_data.mat', 'r') as hfile:
         trainingSetData = hfile['trainingSetData'][:].T
-
+    print("a")
     # Loading training embedding
     with h5py.File(tfolderLoading+ 'training_embedding.mat', 'r') as hfile:
         trainingEmbedding= hfile['trainingEmbedding'][:].T
-
+    print("b")
     if parameters.method == 'TSNE':
-        zValstr = 'zVals' 
+        zValstr = 'zVals'
+        print("c")
+ 
     else:
         zValstr = 'uVals'
 
 
 
     projectionFiles = glob.glob(parameters.projectPathNots+'/Projections/*notpca.mat')
+    print("d")
 
     #projectionFilestoSave =  glob.glob(parameters.projectPath+'/Projections/*notpca.mat')
 
@@ -140,7 +143,7 @@ def total_tsne(parameters):
     for i in range(len(projectionFiles)):
         print('Finding Embeddings')
         t1 = time.time()
-        print('%i/%i : %s'%(i+1,len(projectionFiles), projectionFiles[i]))
+        #print('%i/%i : %s'%(i+1,len(projectionFiles), projectionFiles[i]))
 
 
         # Skip if embeddings already found.
@@ -151,21 +154,25 @@ def total_tsne(parameters):
         # load projections for a dataset
         #modifying adding np.array
         projections = np.array(hdf5storage.loadmat(projectionFiles[i])['projections'])
+        print("e")
 
         # Find Embeddings
         zValues, outputStatistics, wvlets = mmpy.findEmbeddings(projections,trainingSetData,trainingEmbedding,parameters)
+        print("f")
 
         # Save embeddings
-        hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True,
-                        filename = parameters.projectPath+'/Projections/'+'_%s.mat'%(zValstr), store_python_metadata = False,
-                          matlab_compatible = True)
+        hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%(zValstr), store_python_metadata = False, matlab_compatible = True)
+        print("g")
 
         # Saving wlets from total data
         hdf5storage.write(data = {'wavelets':wlets}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%('wlets'), store_python_metadata = False, matlab_compatible = True)
-        
+        print("h")
+
         # Save output statistics
         with open(parameters.projectPath+'/Projections/'+ '_%s_outputStatistics.pkl'%(zValstr), 'wb') as hfile:
             pickle.dump(outputStatistics, hfile)
+        print("i")
+
 
         del zValues,projections,outputStatistics
 
