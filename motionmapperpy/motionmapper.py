@@ -23,6 +23,8 @@ from .setrunparameters import setRunParameters
 from umap import UMAP
 import pickle
 
+import mat73
+
 """Core t-SNE MotionMapper functions."""
 
 def findKLDivergences(data):
@@ -212,7 +214,8 @@ def file_embeddingSubSampling(projectionFile, parameters):
     print('test')
     VERSION = 'monkey'
     
-    projections_in = np.array(hdf5storage.loadmat(projectionFile)["projections"])
+    #projections_in = np.array(hdf5storage.loadmat(projectionFile)["projections"])
+    projections_in = np.array(mat73.loadmat(projectionFile)["projections"])
     '''
     try:
         #projections_in = np.array(loadmat(projectionFile, variable_names=['projections'])['projections'])
