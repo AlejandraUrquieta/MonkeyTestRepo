@@ -77,7 +77,8 @@ def run_tSne(data, parameters=None):
     :return:
             yData -> N x 2 array of embedding results
     """
-    #parameters = setRunParameters(parameters)
+    #see if this was the problem
+    parameters = setRunParameters(parameters)
 
     vals = np.sum(data, 1)
     if ~np.all(vals == 1):
@@ -211,7 +212,7 @@ def file_embeddingSubSampling(projectionFile, parameters):
     print('test')
     VERSION = 'monkey'
     
-    projections_in = np.array(hdf5storage.loadmat(projectionFile)['projections'])
+    projections_in = np.array(hdf5storage.loadmat(projectionFile)["projections"])
     '''
     try:
         #projections_in = np.array(loadmat(projectionFile, variable_names=['projections'])['projections'])
@@ -309,9 +310,9 @@ def file_embeddingSubSampling(projectionFile, parameters):
         signalData = np.concatenate(list_sd, axis=0)
 
 
-        results_directory = parameters.projectPath
+        #results_directory = parameters.projectPath
 
-        tsne_directory= results_directory+'/TSNE/'
+        #tsne_directory= results_directory+'/TSNE/'
 
 
 
@@ -383,7 +384,8 @@ def runEmbeddingSubSampling(projectionDirectory, parameters):
         trainingSetAmps -> Nx1 array of training set wavelet amplitudes
         projectionFiles -> list of files in 'projectionDirectory'
     """
-    #parameters = setRunParameters(parameters)
+    #see if this is the problem
+    parameters = setRunParameters(parameters)
     projectionFiles = glob.glob(projectionDirectory+'/*notpca.mat')
     
     N = parameters.trainingSetSize
@@ -756,7 +758,7 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
         #for i in range(len(idx)):
             #print("i",i)
             #print("D2[i, :]", D2[i, :])
-        outs = pool.starmap(TDistProjs, [(i, D2[i,:], perplexity, sigmaTolerance, maxNeighbors, trainingEmbedding, readout, parameters.waveletDecomp)
+        outs = pool.starmap(TDistProjs, [(i, D2[i,:], perplexity, sigmaTolerance, maxNeighbors, trainingEmbedding, readout, parameters.waveletDecomp) 
                             for i in range(len(idx))])
         print("hello2")
         zGuesses[idx,:] = np.concatenate([out[0][:,None] for out in outs], axis=1).T
