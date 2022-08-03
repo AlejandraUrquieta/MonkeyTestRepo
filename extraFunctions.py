@@ -21,6 +21,7 @@ import random
 from pythonlib.drawmodel import strokePlots
 import math
 import matplotlib.image as mpimg
+import h5py
 
 def get_dataTotal(D):
     # x is the trial index there are 5125 trials so x < 5125
