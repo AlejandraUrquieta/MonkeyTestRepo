@@ -202,7 +202,7 @@ def save_total_tsne(parameters, ally):
     axes[1].imshow(density, cmap=mmpy.gencmap(), extent=(xx[0], xx[-1], xx[0], xx[-1]), origin='lower')
     
     fig.savefig('%s/%s/density_total_tsne.png'%(parameters.projectPath, parameters.method))
-    return density
+    return density, fig
 
 # function to get wavelets from file
 def get_wavelets(parameters):
@@ -308,6 +308,7 @@ def save_density_and_strokes(parameters, density, zValues, number):
     plt.tight_layout()  
     plt.show()
     fig.savefig('%s/%s/density_and_strokes%s.png'%(parameters.projectPath, parameters.method, num))
+    return fig
 
 # function to save watershed
 def save_watershed(parameters, startsigma, minimum_regions):
@@ -319,6 +320,8 @@ def save_watershed(parameters, startsigma, minimum_regions):
                          saveplot=True, endident = '*_notpca.mat')
 
     Image(glob.glob('%s/%s/zWshed*.png'%(parameters.projectPath, parameters.method))[0])
+
+
 #function to get wregions
 def get_wregions(parameters, minimum_regions):
     wshedfile = hdf5storage.loadmat('%s/%s/zVals_wShed_groups%s.mat'%(parameters.projectPath, parameters.method, minimum_regions))
@@ -374,7 +377,7 @@ def save_watershed_and_strokes(parameters, minimum_regions, num):
     plt.tight_layout()  
     plt.show()
     fig.savefig('%s/%s/%swatershed_and_strokes%s.png'%(parameters.projectPath, parameters.method, num, minimum_regions))
-
+    return fig
 
 # function to choose sample of strokes from the index list and return it
 def choose_sample_strokes(lsindex, ni):
@@ -436,7 +439,7 @@ def many_strokes_in_region(zValues, wregions, nr, ns, minimum_regions, num):
         fig.savefig('%s/%s/%swshed_%s_and_strokes%s.png'%(parameters.projectPath, parameters.method, num, nr, minimum_regions))
 
 # function to run for all wshed regions
-def many_strokes_in_all_regions(zValues, wregions, ns, minimum_regions, num):
+def many_strokes_in_all_regions(zValues, ns, minimum_regions, num):
     wregions = get_wregions(parameters, minimum_regions)
     
     nregions = wregions.max()
