@@ -92,6 +92,7 @@ def sub_tsne(parameters):
 def save_sub_tsne(parameters):
     trainy = hdf5storage.loadmat('%s/%s/training_embedding.mat'%(parameters.projectPath, parameters.method))['trainingEmbedding']
     m = np.abs(trainy).max()
+    print(m)
 
     sigma=2.0
     _, xx, density = mmpy.findPointDensity(trainy, sigma, 511, [-m-20, m+20])
@@ -103,15 +104,13 @@ def save_sub_tsne(parameters):
     axes[1].imshow(density, cmap=mmpy.gencmap(), extent=(xx[0], xx[-1], xx[0], xx[-1]), origin='lower')
 
     fig.savefig('%s/%s/density_sub_tsne.png'%(parameters.projectPath, parameters.method))
-    return trainy, density
+    return trainy, density, fig
 
 # function to run tsne for all data
 def total_tsne(parameters):
     #tsne takes 19 mins
     tall = time.time()
 
-
-    import h5py
     tfolder = parameters.projectPath+'/%s/'%parameters.method
 
     tfolderLoading = parameters.projectPathNots+'/%s/'%parameters.method

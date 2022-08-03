@@ -211,7 +211,7 @@ def file_embeddingSubSampling(projectionFile, parameters):
     print('test')
     VERSION = 'monkey'
     
-    projections_in = np.array(hdf5storage.loadmat(projectionFiles[0])['projections'])
+    projections_in = np.array(hdf5storage.loadmat(projectionFile)['projections'])
     '''
     try:
         #projections_in = np.array(loadmat(projectionFile, variable_names=['projections'])['projections'])
