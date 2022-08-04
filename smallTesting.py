@@ -95,13 +95,13 @@ def total_tsne(parameters):
 	    zValstr = 'uVals'
 	projectionFiles = glob.glob(parameters.projectPathNots+'/Projections/*notpca.mat')
 	#projectionFilestoSave =  glob.glob(parameters.projectPath+'/Projections/*notpca.mat')
-	    # Save embeddings
-	    hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%(zValstr), store_python_metadata = False, matlab_compatible = True)
+	# Save embeddings
+	hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%(zValstr), store_python_metadata = False, matlab_compatible = True)
 	    
-	    # Save output statistics
-	    with open(parameters.projectPath+'/Projections/'+ '_%s_outputStatistics.pkl'%(zValstr), 'wb') as hfile:
-	        pickle.dump(outputStatistics, hfile)
-	    del zValues,projections,outputStatistics
+	# Save output statistics
+	with open(parameters.projectPath+'/Projections/'+ '_%s_outputStatistics.pkl'%(zValstr), 'wb') as hfile:
+	    pickle.dump(outputStatistics, hfile)
+	del zValues,projections,outputStatistics
 	print('All Embeddings Saved in %i seconds!'%(time.time()-tall))
 if __name__=="__main__":
 	
