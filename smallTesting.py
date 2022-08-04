@@ -97,6 +97,7 @@ def total_tsne(parameters):
 
 	for i in range(len(projectionFiles)):
 		print('Finding Embeddings')
+        t1 = time.time()
         print('%i/%i : %s'%(i+1,len(projectionFiles), projectionFiles[i]))
         # Skip if embeddings already found.
         if os.path.exists(projectionFiles[i][:-4] +'_%s.mat'%(zValstr)):
@@ -134,7 +135,6 @@ def total_tsne(parameters):
 
 
 if __name__=="__main__":
-	
 	ts = makeTimeStamp()
 	projectPath = f'content/trial1_mmpy{ts}'
 	# This creates a project directory structure which will be used to store all motionmappery pipeline
