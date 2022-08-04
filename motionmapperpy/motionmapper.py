@@ -65,7 +65,7 @@ def run_tSne(data, parameters=None):
     :return:
             yData -> N x 2 array of embedding results
     """
-    parameters = setRunParameters(parameters)
+    #parameters = setRunParameters(parameters)
     vals = np.sum(data, 1)
     if ~np.all(vals == 1):
         data = data / vals[:, None]
@@ -147,7 +147,9 @@ def findTemplatesFromData(signalData, yData, signalAmps, numPerDataSet, paramete
     idx = numInGroup > templateLengths
     numInGroup[idx] = templateLengths[idx]
     cumSumGroupVals = [0] + np.cumsum(numInGroup).astype(int).tolist()
+    
     for j in range(N):
+
         if cumSumGroupVals[j + 1] > cumSumGroupVals[j]:
             amps = signalAmps[vals == j+1]
             idx2 = np.random.permutation(len(templates[j][:, 1]))[:int(numInGroup[j])].astype(int)
@@ -252,11 +254,20 @@ def file_embeddingSubSampling(projectionFile, parameters):
         # [(N1, D), (N2, D), (N3, D)]
         # list_sa should all be like
         # [(N1, ), (N2, ), (N3, )]
-         #[print(x.shape) for x in list_sa]
+        
+        #[print(x.shape) for x in list_sa]
         #[print(x.shape) for x in list_sd]
         #assert False, "coinfirm shapes, then remove this assertiuon line to contineu"
         signalAmps = np.concatenate(list_sa, axis=0)
         signalData = np.concatenate(list_sd, axis=0)
+
+        results_directory = parameters.projectPath
+        tsne_directory= results_directory+'/TSNE/'
+        
+        print("this wors?")        
+
+
+
         #print(signalAmps.shape)
         #print(signalData.shape)
         #assert False, "confirm shapes are as expected"
@@ -265,6 +276,7 @@ def file_embeddingSubSampling(projectionFile, parameters):
     else:
         print(VERSION)
         assert False, 'typo?'
+
     if parameters.method == 'TSNE':
         parameters.perplexity = perplexity
         yData = run_tSne(signalData, parameters)
@@ -273,6 +285,7 @@ def file_embeddingSubSampling(projectionFile, parameters):
     else:
         raise ValueError('Supported parameter.method are \'TSNE\' or \'UMAP\'')
     return yData,signalData,signalIdx,signalAmps
+
 def get_wavelet(projections, parameters):
     numPoints = parameters.training_numPoints
     
@@ -301,7 +314,9 @@ def get_wavelet(projections, parameters):
         signalIdx = np.indices((data.shape[0],))[0]
         signalIdx = signalIdx[firstFrame:int(firstFrame + (numPoints) * skipLength): skipLength]
         signalData = data[signalIdx]
+    
     signalAmps = np.sum(signalData, axis=1)
+    
     signalData = signalData/signalAmps[:,None]
     return signalAmps, signalData, signalIdx
 
@@ -318,7 +333,7 @@ def runEmbeddingSubSampling(projectionDirectory, parameters):
         projectionFiles -> list of files in 'projectionDirectory'
     """
     
-    parameters = setRunParameters(parameters)
+    #parameters = setRunParameters(parameters)
     projectionFiles = glob.glob(projectionDirectory+'/*notpca.mat')
     
     N = parameters.trainingSetSize
@@ -326,13 +341,16 @@ def runEmbeddingSubSampling(projectionDirectory, parameters):
     numPerDataSet = round(N / L)
     numModes = parameters.pcaModes
     numPeriods = parameters.numPeriods
+    
     #print(numPerDataSet)
     #print(parameters.training_numPoints)
+    
     if numPerDataSet > parameters.training_numPoints:
         raise ValueError("miniTSNE size is %i samples per file which is low for current trainingSetSize which "
                          "requries %i samples per file. "
                          "Please decrease trainingSetSize or increase training_numPoints."%
                          (parameters.training_numPoints, numPerDataSet))
+    
     if parameters.waveletDecomp:
         trainingSetData = np.zeros((numPerDataSet * L, numModes * numPeriods))
     else:
@@ -341,15 +359,20 @@ def runEmbeddingSubSampling(projectionDirectory, parameters):
     useIdx = np.ones((numPerDataSet * L), dtype='bool')
     for i in range(L):
         print('Finding training set contributions from data set %i/%i : \n%s'%(i+1, L, projectionFiles[i]))
+        
         currentIdx = np.arange(numPerDataSet) + (i * numPerDataSet)
+        
         yData, signalData, _, signalAmps = file_embeddingSubSampling(projectionFiles[i], parameters)
+        
         trainingSetData[currentIdx,:], trainingSetAmps[currentIdx] = findTemplatesFromData(signalData, yData,
                                                                                            signalAmps, numPerDataSet,
                                                                                         parameters,projectionFiles[i])
         a = (np.sum(trainingSetData[currentIdx,:], 1) == 0)
         useIdx[currentIdx[a]] = False
+    
     trainingSetData = trainingSetData[useIdx,:]
     trainingSetAmps = trainingSetAmps[useIdx]
+    
     return trainingSetData,trainingSetAmps,projectionFiles
 
 
@@ -390,11 +413,13 @@ def subsampled_tsne_from_projections(parameters,results_directory):
         hdf5storage.write(data={'trainingSetAmps': trainingSetAmps}, path='/', truncate_existing=True,
                           filename=tsne_directory + '/training_amps.mat', store_python_metadata=False,
                           matlab_compatible=True)
+
         del trainingSetAmps
     else:
         print('Subsampled trainingSetData found, skipping minitSNE and running training tSNE')
         with h5py.File(tsne_directory + '/training_data.mat', 'r') as hfile:
             trainingSetData = hfile['trainingSetData'][:].T
+    
     # %% Run t-SNE on training set
     if parameters.method == 'TSNE':
         if tSNE_method_old  != 'barnes_hut':
@@ -402,6 +427,7 @@ def subsampled_tsne_from_projections(parameters,results_directory):
             parameters.tSNE_method = tSNE_method_old
         parameters.tsne_readout = 5
         print('Finding t-SNE Embedding for Training Set')
+        
         trainingEmbedding= run_tSne(trainingSetData,parameters)
     elif parameters.method == 'UMAP':
         print('Finding UMAP Embedding for Training Set')
@@ -411,7 +437,9 @@ def subsampled_tsne_from_projections(parameters,results_directory):
     hdf5storage.write(data={'trainingEmbedding': trainingEmbedding}, path='/', truncate_existing=True,
                       filename=tsne_directory + '/training_embedding.mat', store_python_metadata=False,
                       matlab_compatible=True)
+
 """Re-Embedding Code"""
+
 def returnCorrectSigma_sparse(ds, perplexity, tol,maxNeighbors):
     highGuess = np.max(ds)
     #print("ds", ds)
@@ -432,35 +460,45 @@ def returnCorrectSigma_sparse(ds, perplexity, tol,maxNeighbors):
         test = False
     else:
         test = True
+
     count = 0
     if ~np.isfinite(sigma):
         raise ValueError('Starting sigma is %0.02f, highGuess is %0.02f '
                 'and lowGuess is %0.02f'%(sigma, highGuess, lowGuess))
     while test:
+
         if P > perplexity:
             highGuess = sigma
         else:
             lowGuess = sigma
+
         sigma = .5*(highGuess + lowGuess)
+
+
         p = np.exp(-.5*np.square(ds)/sigma**2)
         if np.sum(p) > 0:
             p = p/np.sum(p)
         idx = p>0
         H = np.sum(-np.multiply(p[idx],np.log(p[idx]))/np.log(2))
         P = 2**H
+
         if np.abs(P-perplexity) < tol:
             test = False
+
     out = np.zeros((dsize[0],))
     out[sortIdx[:maxNeighbors]] = p
     return sigma,out
+
 def findListKLDivergences(data, data2):
     logData = np.log(data)
+
     if ~np.all(np.isfinite(logData)) | ~np.all(np.isfinite(data2)):
         print("logData",logData)
         print("logData.shape", logData.shape)
         print("trainingData", data2)
         print("findListKLDivergences 581")
         assert False
+    
     entropies = -np.sum(np.multiply(data,logData), 1)
     
     if ~np.all(np.isfinite(entropies)):
@@ -470,68 +508,92 @@ def findListKLDivergences(data, data2):
         print("findListKLDivergences 594")
         print("entropies", entropies)
         assert False
+    
     del logData
+
     logData2 = np.log(data2)
     
     if ~np.all(np.isfinite(logData2)):
         print("logData2", logData2)
         print("findListKLDivergences 610")
         assert False
+    
     D = - np.dot(data,logData2.T)
+    
     if ~np.all(np.isfinite(D)):
         print("D", D)
         print("D.shape", D.shape)
         print("findListKLDivergences 595")
         print("logData2", logData2)
+        
         assert False
+    
+
     D = D - entropies[:,None]
+    
     if ~np.all(np.isfinite(D)):
         print("D", D)
         print("D.shape", D.shape)
         print("findListKLDivergences 603")
         assert False
+    
     D = D / np.log(2)
+    
     if ~np.all(np.isfinite(D)):
         print("D", D)
         print("D.shape", D.shape)
         print("findListKLDivergences 611")
         assert False
+    
     return D,entropies
+
 def calculateKLCost(x,ydata,ps):
     d = np.sum(np.square(ydata-x),1).T
     out = np.log(np.sum(1/(1+d))) + np.sum(np.multiply(ps,np.log(1+d)))
     return out
+
 def TDistProjs(i, q, perplexity, sigmaTolerance, maxNeighbors, trainingEmbedding, readout, waveletDecomp):
     print("is this printing")
     if (i+1)%readout == 0:
         t1 = time.time()
         print('\t\t Calculating Sigma Image #%5i'% (i+1))
+    
     #print("q", q)
     _, p = returnCorrectSigma_sparse(q, perplexity, sigmaTolerance, maxNeighbors)
+    
     if (i+1)%readout == 0:
         print('\t\t Calculated Sigma Image #%5i'%(i+1))
+    
     idx2 = p>0
     z = trainingEmbedding[idx2,:]
     maxIdx = np.argmax(p)
     a = np.sum(z*(p[idx2].T)[:,None],axis=0)
+    
     guesses = [a, trainingEmbedding[maxIdx,:]]
+    
     q = Delaunay(z)
+    
     if (i+1)%readout == 0:
         print('\t\t FminSearch Image #%5i'%(i+1))
+    
     b = np.zeros((2, 2))
     c = np.zeros((2,))
     flags = np.zeros((2,))
+    
     if waveletDecomp:
         costfunc = calculateKLCost
     else:
         costfunc = calculateKLCost
+    
     b[0, :], c[0], _, _, flags[0] = fmin(costfunc, x0=guesses[0], args=(z, p[idx2]), disp=False,
                                          full_output=True, maxiter=100)
     b[1, :], c[1], _, _, flags[1] = fmin(costfunc, x0=guesses[1], args=(z, p[idx2]), disp=False,
                                          full_output=True, maxiter=100)
     if (i+1)%readout == 0:
         print('\t\t FminSearch Done Image #%5i %0.02fseconds flags are %s'%(i+1, time.time()-t1, flags))
+    
     polyIn = q.find_simplex(b)>=0
+    
     if np.sum(polyIn) > 0:
         pp = np.where(polyIn)[0]
         mI = np.argmin(c[polyIn])
@@ -540,6 +602,7 @@ def TDistProjs(i, q, perplexity, sigmaTolerance, maxNeighbors, trainingEmbedding
     else:
         mI = np.argmin(c)
         current_poly = False
+    
     if (i+1)%readout == 0:
         print('\t\t Simplex search done Image #%5i %0.02fseconds'%(i+1, time.time()-t1))
     exitFlags = flags[mI]
@@ -548,12 +611,15 @@ def TDistProjs(i, q, perplexity, sigmaTolerance, maxNeighbors, trainingEmbedding
     tCosts = c[mI]
     current_meanMax = mI
     return current_guesses, current, tCosts, current_poly, current_meanMax, exitFlags
+
 def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, parameters):
     readout = 20000
     sigmaTolerance = 1e-5
     perplexity = parameters.perplexity
     maxNeighbors = parameters.maxNeighbors
     batchSize = parameters.embedding_batchSize
+    
+
     N = len(data)
     zValues = np.zeros((N,2))
     zGuesses = np.zeros((N,2))
@@ -562,16 +628,20 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
     inConvHull = np.zeros((N,), dtype=bool)
     meanMax = np.zeros((N,))
     exitFlags = np.zeros((N,))
+    
     if parameters.numProcessors < 0:
         numProcessors = mp.cpu_count()
     else:
         numProcessors = parameters.numProcessors
     # ctx = mp.get_context('spawn')
+    
     print("batches",batches)
+    
     for j in range(batches):
         print('\t Processing batch #%4i out of %4i'%(j+1,batches))
         idx = np.arange(batchSize) + j*batchSize
         print("idx1",idx)
+        
         idx = idx[idx < N]
         currentData = data[idx,:]
         #print("idx2",idx)
@@ -580,15 +650,18 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
         #print("currentData.shape",currentData.shape)
         #print("currentData[0]", currentData[0])
         #print("currentData[0].shape", currentData[0].shape)
+        
         if ~np.all(np.isfinite(currentData)):
                 print("findTDistributedProjections_fmin 675", np.max(currentData))
                 print("currentData",currentData)
                 print("currentData shape",currentData[0].shape)
                 assert False
+        
         if parameters.waveletDecomp:
             if np.sum(currentData==0):
                 print('Zeros found in wavelet data at following positions. Will replace then with 1e-12.')
                 currentData[currentData==0] = 1e-12
+            
             print('\t Calculating distances for batch %4i'%(j+1))
             t1 = time.time()
             D2,_ = findListKLDivergences(currentData,trainingData)
@@ -601,11 +674,29 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
                 print("D2[0]", D2[0])
                 print("D2[0].shape", D2[0].shape)
                 assert False
-        else:
+             '''
+        if parameters.waveletDecomp:
+            if np.sum(currentData==0):
+                print('Zeros found in wavelet data at following positions. Will replace then with 1e-12.')
+                currentData[currentData==0] = 1e-12
+            print('\t Calculating distances for batch %4i'%(j+1))
+            t1 = time.time()
+            D2,_ = findListKLDivergences(currentData,trainingData)
+            print('\t Calculated distances for batch %4i %0.02fseconds.'%(j+1, time.time()-t1))
+            
+            if ~np.all(np.isfinite(D2)):
+                print("findTDistributedProjections_fmin", np.max(D2))
+                print("D2",D2)
+                print("D2 shape",D2[0].shape)
+            ''' 
+        print("what")
+        '''
+        else:           
             print('\t Calculating distances for batch %4i' % (j + 1))
             t1 = time.time()
             D2 = distance.cdist(currentData, trainingData, metric='sqeuclidean')
             print('\t Calculated distances for batch %4i %0.02fseconds.' % (j + 1, time.time() - t1))
+        '''
         print('\t Calculating fminProjections for batch %4i' % (j + 1))
         t1 = time.time()
         pool = mp.Pool(numProcessors)
@@ -615,6 +706,7 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
             #print("D2[i, :]", D2[i, :])
         outs = pool.starmap(TDistProjs, [(i, D2[i,:], perplexity, sigmaTolerance, maxNeighbors, trainingEmbedding, readout, parameters.waveletDecomp)
                             for i in range(len(idx))])
+        
         zGuesses[idx,:] = np.concatenate([out[0][:,None] for out in outs], axis=1).T
         zValues[idx,:] = np.concatenate([out[1][:,None] for out in outs], axis=1).T
         zCosts[idx] = np.array([out[2] for out in outs])
@@ -624,8 +716,11 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
         pool.close()
         pool.join()
         print('\t Processed batch #%4i out of %4i in %0.02fseconds.\n'%(j+1, batches, time.time()-t1))
+    
     zValues[~inConvHull,:] = zGuesses[~inConvHull,:]
+    
     return zValues,zCosts,zGuesses,inConvHull,meanMax,exitFlags
+            
 
 def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
     """
@@ -641,24 +736,35 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
     #d = projections.shape[1]
     numModes = parameters.pcaModes
     numPeriods = parameters.numPeriods
+
     if parameters.waveletDecomp:
         print('Finding Wavelets')
         #print(projections.shape)
+        
         zValues = []
         for i, proj in enumerate(projections):
+            
             #print(proj)
             #print(proj.shape)
+            
             data, f = mm_findWavelets(proj, numModes, parameters)
+            
             if parameters.useGPU >= 0:
                 data = data.get()
+            
             #print(data.shape)
+            
             data = data / np.sum(data, 1)[:, None]
             
             print(data.shape)
+            
             if ~np.all(np.isfinite(data)):
                 print("Stroke",i)
+                
                 print("findEmbeddings 741",np.max(data))
+                
                 print(data)
+            
             print('Finding Embeddings')
             t1 = time.time()
             if parameters.method == 'TSNE':
@@ -666,6 +772,7 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
                                                                                         trainingData, trainingEmbedding, parameters)
                 #print(zVal)
                 #print(zVal.shape)
+                
                 outputStatistics = edict()
                 outputStatistics.zCosts = zCosts
                 outputStatistics.f = f
@@ -699,6 +806,7 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
             
             #print(zVal)
             rowindx = int(zVal.shape[0]/2)
+            
             zVal = zVal[rowindx:rowindx+1,:]
             #print("1",zVal1)
             zVal = zVal[0]
