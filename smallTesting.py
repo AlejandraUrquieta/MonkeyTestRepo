@@ -94,15 +94,53 @@ def total_tsne(parameters):
 	else:
 	    zValstr = 'uVals'
 	projectionFiles = glob.glob(parameters.projectPathNots+'/Projections/*notpca.mat')
-	#projectionFilestoSave =  glob.glob(parameters.projectPath+'/Projections/*notpca.mat')
-	# Save embeddings
-	hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%(zValstr), store_python_metadata = False, matlab_compatible = True)
-	    
-	# Save output statistics
-	with open(parameters.projectPath+'/Projections/'+ '_%s_outputStatistics.pkl'%(zValstr), 'wb') as hfile:
-	    pickle.dump(outputStatistics, hfile)
-	del zValues,projections,outputStatistics
-	print('All Embeddings Saved in %i seconds!'%(time.time()-tall))
+	
+	for i in range(len(projectionFiles)):
+        print('Finding Embeddings')
+        t1 = time.time()
+        #print('%i/%i : %s'%(i+1,len(projectionFiles), projectionFiles[i]))
+
+
+        # Skip if embeddings already found.
+        if os.path.exists(projectionFiles[i][:-4] +'_%s.mat'%(zValstr)):
+            print('Already done. Skipping.\n')
+            continue
+
+        # load projections for a dataset
+        #modifying adding np.array
+        projections = np.array(hdf5storage.loadmat(projectionFiles[i])['projections'])
+        print("e")
+
+        # Find Embeddings
+        #zValues, outputStatistics, wvlets = mmpy.findEmbeddings(projections,trainingSetData,trainingEmbedding,parameters)
+        zValues, outputStatistics = mmpy.findEmbeddings(projections, trainingSetData, trainingEmbedding, parameters)
+        print("f")
+
+        # Save embeddings
+        hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%(zValstr), store_python_metadata = False, matlab_compatible = True)
+        print("g")
+
+        '''
+        # stop wavelets
+        # Saving wlets from total data
+        hdf5storage.write(data = {'wavelets':wlets}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%('wlets'), store_python_metadata = False, matlab_compatible = True)
+        print("h")
+        '''
+
+        # Save output statistics
+        with open(parameters.projectPath+'/Projections/'+ '_%s_outputStatistics.pkl'%(zValstr), 'wb') as hfile:
+            pickle.dump(outputStatistics, hfile)
+        print("i")
+
+
+        del zValues,projections,outputStatistics
+
+
+    print('All Embeddings Saved in %i seconds!'%(time.time()-tall))
+
+
+
+
 if __name__=="__main__":
 	
 	ts = makeTimeStamp()
