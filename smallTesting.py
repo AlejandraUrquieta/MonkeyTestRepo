@@ -32,34 +32,34 @@ def get_dataTotal(D):
 	#len(D.Dat)
 	x=0
 	for x in range(len(D.Dat)):
-	    y=0
-	    ldataOneTrial = []
-	    for y in range(len(D.Dat.iloc[x]["strokes_beh"])):
-	        #print(len(D.Dat.iloc[x]["strokes_beh"]))
-	        i=0
-	        ldataOneStroke = []
-	        for i in range(i,len(D.Dat.iloc[x]["strokes_beh"][y])):
-	            temp = D.Dat.iloc[x]["strokes_beh"][y][i][0:2]
-	            ldataOneStroke.append(temp)
-	        #print(len(ldataOneStroke))
-	        dataOneStroke = np.array(ldataOneStroke)
-	        #print(dataOneStroke)
-	        #ldataOneTrial = np.append(ldataOneTrial,ldataOneStroke)
-	        ldataOneTrial.append(dataOneStroke)
-	    #print(len(ldataOneTrial))    
-	    dataOneTrial = np.array(ldataOneTrial)
-	    ldataTotal.append(dataOneTrial)
-	    #ldataTotal = np.append(ldataTotal,ldataOneTrial)
-	    #dataOneTrial = np.vstack((dataOneTrial, dataOneStroke))
+		y=0
+		ldataOneTrial = []
+		for y in range(len(D.Dat.iloc[x]["strokes_beh"])):
+			#print(len(D.Dat.iloc[x]["strokes_beh"]))
+			i=0
+			ldataOneStroke = []
+			for i in range(i,len(D.Dat.iloc[x]["strokes_beh"][y])):
+				temp = D.Dat.iloc[x]["strokes_beh"][y][i][0:2]
+				ldataOneStroke.append(temp)
+			#print(len(ldataOneStroke))
+			dataOneStroke = np.array(ldataOneStroke)
+			#print(dataOneStroke)
+			#ldataOneTrial = np.append(ldataOneTrial,ldataOneStroke)
+			ldataOneTrial.append(dataOneStroke)
+		#print(len(ldataOneTrial))    
+		dataOneTrial = np.array(ldataOneTrial)
+		ldataTotal.append(dataOneTrial)
+		#ldataTotal = np.append(ldataTotal,ldataOneTrial)
+		#dataOneTrial = np.vstack((dataOneTrial, dataOneStroke))
 	dataTotal = np.array(ldataTotal)
 	return dataTotal
 # function to get list of strokes indexes
 def get_strokeIndexes(dataTotal):
 	list_trialstroke = []
 	for trial, x in enumerate(dataTotal):
-	    #print(len(x))
-	    for strokenum, xx in enumerate(x):
-	        list_trialstroke.append((trial, strokenum))
+		#print(len(x))
+		for strokenum, xx in enumerate(x):
+			list_trialstroke.append((trial, strokenum))
 	return list_trialstroke
 # function to get list of 
 # num should not be more than 5125
@@ -68,9 +68,9 @@ def get_strokes(dataTotal,num):
 	ndata = num
 	lindependentStrokes = []
 	for x in range(ndata):
-	    for y in range(len(dataTotal[x])):
-	        temp = dataTotal[x][y]
-	        lindependentStrokes.append(temp)
+		for y in range(len(dataTotal[x])):
+			temp = dataTotal[x][y]
+			lindependentStrokes.append(temp)
 	#independentStrokes = np.array(lindependentStrokes)
 	return lindependentStrokes
 # function to run subsampled tsne
@@ -88,49 +88,47 @@ def total_tsne(parameters):
 		trainingSetData = hfile['trainingSetData'][:].T
 	# Loading training embedding
 	with h5py.File(tfolderLoading+ 'training_embedding.mat', 'r') as hfile:
-	    trainingEmbedding= hfile['trainingEmbedding'][:].T
+		trainingEmbedding= hfile['trainingEmbedding'][:].T
 	if parameters.method == 'TSNE':
-	    zValstr = 'zVals' 
+		zValstr = 'zVals' 
 	else:
-	    zValstr = 'uVals'
+		zValstr = 'uVals'
 	projectionFiles = glob.glob(parameters.projectPathNots+'/Projections/*notpca.mat')
 
 	for i in range(len(projectionFiles)):
 		print('Finding Embeddings')
-        t1 = time.time()
-        print('%i/%i : %s'%(i+1,len(projectionFiles), projectionFiles[i]))
-        # Skip if embeddings already found.
-        if os.path.exists(projectionFiles[i][:-4] +'_%s.mat'%(zValstr)):
-        	print('Already done. Skipping.\n')
-            continue
+		t1 = time.time()
+		print('%i/%i : %s'%(i+1,len(projectionFiles), projectionFiles[i]))
+		# Skip if embeddings already found.
+		if os.path.exists(projectionFiles[i][:-4] +'_%s.mat'%(zValstr)):
+			print('Already done. Skipping.\n')
+			continue
 
-        # load projections for a dataset
-        #modifying adding np.array
-        projections = np.array(hdf5storage.loadmat(projectionFiles[i])['projections'])
-        #print("e")
+		#load projections for a dataset
+		#modifying adding np.array
+		projections = np.array(hdf5storage.loadmat(projectionFiles[i])['projections'])
+		#print("e")
 
-        # Find Embeddings
-        #zValues, outputStatistics, wvlets = mmpy.findEmbeddings(projections,trainingSetData,trainingEmbedding,parameters)
-        zValues, outputStatistics = mmpy.findEmbeddings(projections, trainingSetData, trainingEmbedding, parameters)
-        #print("f")
+		# Find Embeddings
+		#zValues, outputStatistics, wvlets = mmpy.findEmbeddings(projections,trainingSetData,trainingEmbedding,parameters)
+		zValues, outputStatistics = mmpy.findEmbeddings(projections, trainingSetData, trainingEmbedding, parameters)
+		#print("f")
 
-        # Save embeddings
-        hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%(zValstr), store_python_metadata = False, matlab_compatible = True)
-        #print("g")
+		# Save embeddings
+		hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%(zValstr), store_python_metadata = False, matlab_compatible = True)
+		#print("g")
 
-        '''
-        # stop wavelets
-        # Saving wlets from total data
-        hdf5storage.write(data = {'wavelets':wlets}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%('wlets'), store_python_metadata = False, matlab_compatible = True)
-        print("h")
-        '''
+		# stop wavelets
+		# Saving wlets from total data
+		#hdf5storage.write(data = {'wavelets':wlets}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%('wlets'), store_python_metadata = False, matlab_compatible = True)
+		#print("h")
 
-        # Save output statistics
-        with open(parameters.projectPath+'/Projections/'+ '_%s_outputStatistics.pkl'%(zValstr), 'wb') as hfile:
-            pickle.dump(outputStatistics, hfile)
-        #print("i")
+		# Save output statistics
+		with open(parameters.projectPath+'/Projections/'+ '_%s_outputStatistics.pkl'%(zValstr), 'wb') as hfile:
+			pickle.dump(outputStatistics, hfile)
+		#print("i")
 
-        del zValues,projections,outputStatistics
+		del zValues,projections,outputStatistics
 	print('All Embeddings Saved in %i seconds!'%(time.time()-tall))
 
 
