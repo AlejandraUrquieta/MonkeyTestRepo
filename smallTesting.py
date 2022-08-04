@@ -94,11 +94,10 @@ def total_tsne(parameters):
 	else:
 	    zValstr = 'uVals'
 	projectionFiles = glob.glob(parameters.projectPathNots+'/Projections/*notpca.mat')
-	
+
 	for i in range(len(projectionFiles)):
 		print('Finding Embeddings')
-        #print('%i/%i : %s'%(i+1,len(projectionFiles), projectionFiles[i]))
-
+        print('%i/%i : %s'%(i+1,len(projectionFiles), projectionFiles[i]))
         # Skip if embeddings already found.
         if os.path.exists(projectionFiles[i][:-4] +'_%s.mat'%(zValstr)):
         	print('Already done. Skipping.\n')
