@@ -94,6 +94,7 @@ def total_tsne(parameters):
 	else:
 		zValstr = 'uVals'
 	projectionFiles = glob.glob(parameters.projectPathNots+'/Projections/*notpca.mat')
+	projectionFilestoSave = glob.glob(parameters.projectPath+'/Projections/*notpca.mat')
 
 	for i in range(len(projectionFiles)):
 		print('Finding Embeddings')
