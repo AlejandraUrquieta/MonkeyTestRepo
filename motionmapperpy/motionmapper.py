@@ -740,6 +740,8 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
     if parameters.waveletDecomp:
         print('Finding Wavelets')
         #print(projections.shape)
+        #trying wavelets
+        wvlets = []
         
         zValues = []
         for i, proj in enumerate(projections):
@@ -748,6 +750,13 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
             #print(proj.shape)
             
             data, f = mm_findWavelets(proj, numModes, parameters)
+
+            #trying wavelets
+            rw = int(data.shape[0]/2)
+            wvlet = data[rw:rw+1,:]
+            wlets.append(wvlet)
+
+
             
             if parameters.useGPU >= 0:
                 data = data.get()
@@ -856,4 +865,6 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
     #print(zValues)
     #print(type(zValues))
     
-    return zValues,outputStatistics
+    
+    #trying wavlets
+    return zValues,outputStatistics, wvlets

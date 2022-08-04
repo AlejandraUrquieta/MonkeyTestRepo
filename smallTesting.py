@@ -127,12 +127,17 @@ def total_tsne(parameters):
 
 		# Find Embeddings
 		#zValues, outputStatistics, wvlets = mmpy.findEmbeddings(projections,trainingSetData,trainingEmbedding,parameters)
-		zValues, outputStatistics = mmpy.findEmbeddings(projections, trainingSetData, trainingEmbedding, parameters)
+		#trying wvlets
+		zValues, outputStatistics, wvlets = mmpy.findEmbeddings(projections, trainingSetData, trainingEmbedding, parameters)
 		#print("f")
 
 		# Save embeddings
 		hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%(zValstr), store_python_metadata = False, matlab_compatible = True)
 		#print("g")
+
+		#trying wvlets
+		hdf5storage.write(data = {'wvlets':wvlets}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%('wvlets'), store_python_metadata = False, matlab_compatible = True)
+
 
 		# stop wavelets
 		# Saving wlets from total data
@@ -144,7 +149,7 @@ def total_tsne(parameters):
 			pickle.dump(outputStatistics, hfile)
 		#print("i")
 
-		del zValues,projections,outputStatistics
+		del zValues,projections,outputStatistics, wvlets
 	
 	print('All Embeddings Saved in %i seconds!'%(time.time()-tall))
 
@@ -230,7 +235,7 @@ if __name__=="__main__":
 	D = Dataset(path_list, append_list)
 	dataTotal = get_dataTotal(D)
 	get_strokeIndexes(dataTotal)
-	projections = get_strokes(dataTotal,5125)
+	projections = get_strokes(dataTotal,20)
 	print('%s/Projections/test_monkey_notpca.mat'%(projectPath))
 	hdf5storage.savemat('%s/Projections/test_monkey_notpca.mat'%(projectPath), {"projections" : projections})
 	#projectionFiles = glob.glob(parameters.projectPath+'/Projections/*test_monkey_notPCA.mat')
