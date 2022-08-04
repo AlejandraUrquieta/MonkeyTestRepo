@@ -96,7 +96,7 @@ def total_tsne(parameters):
 	projectionFiles = glob.glob(parameters.projectPathNots+'/Projections/*notpca.mat')
 	
 	for i in range(len(projectionFiles)):
-        print('Finding Embeddings')
+		print('Finding Embeddings')
         t1 = time.time()
         #print('%i/%i : %s'%(i+1,len(projectionFiles), projectionFiles[i]))
 
@@ -109,16 +109,16 @@ def total_tsne(parameters):
         # load projections for a dataset
         #modifying adding np.array
         projections = np.array(hdf5storage.loadmat(projectionFiles[i])['projections'])
-        print("e")
+        #print("e")
 
         # Find Embeddings
         #zValues, outputStatistics, wvlets = mmpy.findEmbeddings(projections,trainingSetData,trainingEmbedding,parameters)
         zValues, outputStatistics = mmpy.findEmbeddings(projections, trainingSetData, trainingEmbedding, parameters)
-        print("f")
+        #print("f")
 
         # Save embeddings
         hdf5storage.write(data = {'zValues':zValues}, path = '/', truncate_existing = True, filename = parameters.projectPath+'/Projections/'+'_%s.mat'%(zValstr), store_python_metadata = False, matlab_compatible = True)
-        print("g")
+        #print("g")
 
         '''
         # stop wavelets
@@ -130,15 +130,11 @@ def total_tsne(parameters):
         # Save output statistics
         with open(parameters.projectPath+'/Projections/'+ '_%s_outputStatistics.pkl'%(zValstr), 'wb') as hfile:
             pickle.dump(outputStatistics, hfile)
-        print("i")
-
+        #print("i")
 
         del zValues,projections,outputStatistics
 
-
     print('All Embeddings Saved in %i seconds!'%(time.time()-tall))
-
-
 
 
 if __name__=="__main__":
