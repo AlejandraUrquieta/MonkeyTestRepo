@@ -754,7 +754,7 @@ def findEmbeddings(projections, trainingData, trainingEmbedding, parameters):
             #trying wavelets
             rw = int(data.shape[0]/2)
             wvlet = data[rw:rw+1,:]
-            wlets.append(wvlet)
+            wvlets.append(wvlet)
 
 
             
