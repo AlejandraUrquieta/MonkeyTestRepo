@@ -674,7 +674,7 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
                 print("D2[0]", D2[0])
                 print("D2[0].shape", D2[0].shape)
                 assert False
-             '''
+        '''
         if parameters.waveletDecomp:
             if np.sum(currentData==0):
                 print('Zeros found in wavelet data at following positions. Will replace then with 1e-12.')
@@ -688,7 +688,7 @@ def findTDistributedProjections_fmin(data, trainingData, trainingEmbedding, para
                 print("findTDistributedProjections_fmin", np.max(D2))
                 print("D2",D2)
                 print("D2 shape",D2[0].shape)
-            ''' 
+        ''' 
         print("what")
         '''
         else:           
