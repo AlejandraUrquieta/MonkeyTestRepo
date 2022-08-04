@@ -85,7 +85,7 @@ def total_tsne(parameters):
 	tfolderLoading = parameters.projectPathNots+'/%s/'%parameters.method
 	# Loading training data
 	with h5py.File(tfolderLoading + 'training_data.mat', 'r') as hfile:
-	    trainingSetData = hfile['trainingSetData'][:].T
+		trainingSetData = hfile['trainingSetData'][:].T
 	# Loading training embedding
 	with h5py.File(tfolderLoading+ 'training_embedding.mat', 'r') as hfile:
 	    trainingEmbedding= hfile['trainingEmbedding'][:].T
@@ -100,10 +100,9 @@ def total_tsne(parameters):
         t1 = time.time()
         #print('%i/%i : %s'%(i+1,len(projectionFiles), projectionFiles[i]))
 
-
         # Skip if embeddings already found.
         if os.path.exists(projectionFiles[i][:-4] +'_%s.mat'%(zValstr)):
-            print('Already done. Skipping.\n')
+        	print('Already done. Skipping.\n')
             continue
 
         # load projections for a dataset
@@ -133,8 +132,7 @@ def total_tsne(parameters):
         #print("i")
 
         del zValues,projections,outputStatistics
-
-    print('All Embeddings Saved in %i seconds!'%(time.time()-tall))
+	print('All Embeddings Saved in %i seconds!'%(time.time()-tall))
 
 
 if __name__=="__main__":
