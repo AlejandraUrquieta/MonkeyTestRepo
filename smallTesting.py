@@ -97,7 +97,6 @@ def total_tsne(parameters):
 	
 	for i in range(len(projectionFiles)):
 		print('Finding Embeddings')
-        t1 = time.time()
         #print('%i/%i : %s'%(i+1,len(projectionFiles), projectionFiles[i]))
 
         # Skip if embeddings already found.
