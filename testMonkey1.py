@@ -252,7 +252,7 @@ if __name__=="__main__":
 	
 	list_trialstroke = ef.get_strokeIndexes(dataTotal)
 	
-	projections = ef.get_strokes(dataTotal,20)
+	projections = ef.get_strokes(dataTotal,5215)
 	
 	print('%s/Projections/test_monkey_notpca.mat'%(projectPath))
 	
