@@ -242,3 +242,5 @@ if __name__=="__main__":
 	sub_tsne(parameters)
 	
 	total_tsne(parameters)
+
+	

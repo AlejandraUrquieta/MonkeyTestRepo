@@ -218,8 +218,19 @@ def save_total_tsne(parameters, ally):
 
 # function to get wavelets from file
 def get_wavelets(parameters):
-    wlets = hdf5storage.loadmat(glob.glob(parameters.projectPath+'/Projections/*_%s.mat'%('wlets'))[0])['wavelets']
-    return wlets
+    #used to be hdf5storage.loadmat(glob.glob(parameters.projectPath+'/Projections/*_%s.mat'%('wlets'))[0])['wavelets']
+    wvlets = hdf5storage.loadmat(glob.glob(parameters.projectPath+'/Projections/*_%s.mat'%('wvlets'))[0])['wvlets'][0]
+    
+    wavelets = []
+    for i in range(len(wvlets)):
+        onewvlet = []
+        for j in range(len(wvlets[i][0])):
+            item = wvlets[i][0][j]
+            onewvlet.append(item)
+            nponewvlet = np.array(onewvlet)
+        wavelets.append(nponewvlet)
+    npwavelets = np.array(wavelets)
+    return npwavelets
 
 # function to divide the strokes in areas
 def divide_strokes(zValues, num, origin):
