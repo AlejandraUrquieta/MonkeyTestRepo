@@ -127,6 +127,7 @@ def total_tsne(parameters):
 
 		# Find Embeddings
 		#zValues, outputStatistics, wvlets = mmpy.findEmbeddings(projections,trainingSetData,trainingEmbedding,parameters)
+		#trying wvlets
 		zValues, outputStatistics, wvlets = mmpy.findEmbeddings(projections, trainingSetData, trainingEmbedding, parameters)
 		#print("f")
 
@@ -163,7 +164,8 @@ if __name__=="__main__":
 	
 	mmpy.createProjectDirectory(projectPath)
 	
-	projectPathNots = 'content/trial1_mmpy'
+	#projectPathNots = 'content/trial1_mmpy'
+	projectPathNots = projectPath
 	#%matplotlib inline
 	expt = 'gridlinecircle'
 	path_list = [
@@ -230,14 +232,14 @@ if __name__=="__main__":
 	writeDictToYaml(parameters, projectPath+'/parameters.yaml')
 	
 
-	#D = Dataset(path_list, append_list)
-	#dataTotal = get_dataTotal(D)
-	#get_strokeIndexes(dataTotal)
-	#projections = get_strokes(dataTotal,5125)
-	#print('%s/Projections/test_monkey_notpca.mat'%(projectPath))
-	#hdf5storage.savemat('%s/Projections/test_monkey_notpca.mat'%(projectPath), {"projections" : projections})
+	D = Dataset(path_list, append_list)
+	dataTotal = get_dataTotal(D)
+	get_strokeIndexes(dataTotal)
+	projections = get_strokes(dataTotal,5125)
+	print('%s/Projections/test_monkey_notpca.mat'%(projectPath))
+	hdf5storage.savemat('%s/Projections/test_monkey_notpca.mat'%(projectPath), {"projections" : projections})
 	#projectionFiles = glob.glob(parameters.projectPath+'/Projections/*test_monkey_notPCA.mat')
-	#sub_tsne(parameters)
+	sub_tsne(parameters)
 	
 	total_tsne(parameters)
 
