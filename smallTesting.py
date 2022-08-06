@@ -17,7 +17,10 @@ from pythonlib.dataset.dataset_preprocess.general import preprocessDat
 
 import motionmapperpy as mmpy
 from pythonlib.tools.expttools import makeTimeStamp, writeDictToYaml
+#trying with ef
+import extraFunctions as ef
 
+'''
 # function to get data in the form of array dataTotal
 def get_dataTotal(D):
 	# x is the trial index there are 5125 trials so x < 5125
@@ -152,6 +155,8 @@ def total_tsne(parameters):
 		del zValues,projections,outputStatistics, wvlets
 	
 	print('All Embeddings Saved in %i seconds!'%(time.time()-tall))
+'''
+
 
 if __name__=="__main__":
 	
@@ -233,14 +238,42 @@ if __name__=="__main__":
 	
 
 	D = Dataset(path_list, append_list)
-	dataTotal = get_dataTotal(D)
-	get_strokeIndexes(dataTotal)
-	projections = get_strokes(dataTotal,20)
+	dataTotal = ef.get_dataTotal(D)
+	list_trialstroke = ef.get_strokeIndexes(dataTotal)
+	projections = ef.get_strokes(dataTotal,20)
 	print('%s/Projections/test_monkey_notpca.mat'%(projectPath))
 	hdf5storage.savemat('%s/Projections/test_monkey_notpca.mat'%(projectPath), {"projections" : projections})
 	#projectionFiles = glob.glob(parameters.projectPath+'/Projections/*test_monkey_notPCA.mat')
-	sub_tsne(parameters)
+	ef.sub_tsne(parameters)
 	
-	total_tsne(parameters)
+	ef.total_tsne(parameters)
 
-	
+	subtrainy, subdensity, subfig = ef.save_sub_tsne(parameters)
+
+	zValues = ef.get_zValues_array(parameters, 'zVals')
+
+	totdensity, totfig, totxx = ef.save_total_tsne(parameters, zValues)
+
+	dsfig = ef.save_density_and_strokes(parameters, totdensity, totxx, zValues, D, list_trialstroke, 1)
+
+	#startsigma = 1.0, minimum_regions = 10
+	ef.save_watershed(parameters, startsigma=1.0, minimum_regions=10)
+
+	# minimum_regions = 10
+	wsfig = ef.save_watershed_and_strokes(parameters, D, list_trialstroke, zValues, 10, 2)
+
+	# ns = 10, minimum_regions = 10
+	ef.many_strokes_in_all_regions(parameters, D, list_trialstroke, zValues, 20, 10, 3)
+
+	wavelets = ef.get_wavelets(parameters)
+
+	# nw = 20, minimum_regions = 10
+	ef.many_wavelets_in_all_regions(parameters, D, zValues, wavelets, 20, 10, 4)
+
+	# nsw = 20, minimum_regions = 10
+	ef.many_strokes_and_wavelets_in_all_regions(parameters, D, list_trialstroke, zValues, wavelets, 20, 10, 5)
+
+	# ntw = 20, minimum_regions = 10
+	ef.many_trajectories_and_wavelets_in_all_regions(parameters, projections, zValues, list_trialstroke, wavelets, 20, 6, 10)
+
+
